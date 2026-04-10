@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBA — Container Beach Adventures | Plataforma de Turismo Receptivo</title>
+    <meta name="description" content="Container Beach Adventures — Turismo receptivo, aventura y experiencias únicas en Venezuela. Alojamiento en contenedores, deportes acuáticos y tours culturales.">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sand: #E8DCC8;
+            --ocean-deep: #0A1628;
+            --ocean-mid: #122A4A;
+            --turquoise: #00C9A7;
+            --turquoise-glow: #00FFD1;
+            --coral: #FF6B5A;
+            --gold: #D4A853;
+            --gold-light: #F0D78C;
+            --white: #FAFAF8;
+            --text-light: rgba(255,255,255,0.85);
+            --text-dim: rgba(255,255,255,0.5);
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--ocean-deep);
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* ============ LANGUAGE SELECTOR ============ */
+        .lang-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 22, 40, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 6px 0;
+            font-size: 12px;
+        }
+        .lang-bar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            align-items: center;
+        }
+        .lang-bar span { color: var(--text-dim); margin-right: 4px; }
+        .lang-btn {
+            background: none;
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Space Mono', monospace;
+            transition: all 0.3s;
+        }
+        .lang-btn:hover, .lang-btn.active {
+            color: var(--turquoise);
+            border-color: var(--turquoise);
+        }
+
+        /* ============ NAVBAR ============ */
+        nav {
+            position: fixed;
+            top: 30px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(10, 22, 40, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 16px 0;
+            transition: all 0.4s;
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+        .logo em { font-style: italic; color: var(--turquoise); font-weight: 400; font-size: 14px; letter-spacing: 2px; display: block; line-height: 1; }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--turquoise); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--turquoise), #00A389) !important;
+            color: var(--ocean-deep) !important;
+            padding: 10px 24px !important;
+            border-radius: 6px;
+            font-weight: 700 !important;
+            letter-spacing: 0.5px !important;
+        }
+        .nav-cta:hover { box-shadow: 0 4px 20px rgba(0, 201, 167, 0.4); }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+
+        /* ============ HERO ============ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 120px 24px 80px;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(0, 201, 167, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(212, 168, 83, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(18, 42, 74, 1) 0%, var(--ocean-deep) 70%);
+        }
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .hero-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--turquoise);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .hero-tag::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--turquoise);
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(40px, 5vw, 68px);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+        .hero h1 span { color: var(--turquoise); }
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--turquoise), #00A389);
+            color: var(--ocean-deep);
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 201, 167, 0.3); }
+        .btn-outline {
+            background: transparent;
+            color: var(--white);
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-outline:hover { border-color: var(--turquoise); color: var(--turquoise); }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-card {
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 3/4;
+            background: linear-gradient(160deg, var(--ocean-mid), var(--ocean-deep));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(180deg, transparent 40%, rgba(10, 22, 40, 0.95) 100%),
+                radial-gradient(ellipse at 50% 30%, rgba(0, 201, 167, 0.2), transparent 60%);
+        }
+        .hero-card-content {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+        }
+        .hero-card-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .hero-card-content p { font-size: 14px; color: var(--text-dim); }
+        .card-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--coral);
+            color: white;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }
+
+        /* Container icons in hero card */
+        .container-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            font-size: 100px;
+            opacity: 0.15;
+        }
+
+        /* ============ STATS ============ */
+        .stats {
+            padding: 60px 24px;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--turquoise);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ============ SECTIONS COMMON ============ */
+        section { padding: 100px 24px; }
+        .section-inner { max-width: 1200px; margin: 0 auto; }
+        .section-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--turquoise);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(32px, 4vw, 52px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .section-desc {
+            font-size: 17px;
+            color: var(--text-light);
+            line-height: 1.7;
+            max-width: 600px;
+            margin-bottom: 50px;
+        }
+
+        /* ============ EXPERIENCES ============ */
+        .experiences-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .exp-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 40px 30px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .exp-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--turquoise);
+            box-shadow: 0 20px 60px rgba(0, 201, 167, 0.1);
+        }
+        .exp-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--turquoise), var(--gold));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .exp-card:hover::after { opacity: 1; }
+        .exp-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .exp-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+        .exp-card p {
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* ============ ACCOMMODATIONS ============ */
+        .accommodations { background: var(--ocean-mid); }
+        .accom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        .accom-features {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .accom-feat {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .accom-feat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .accom-feat h4 { font-size: 16px; margin-bottom: 4px; }
+        .accom-feat p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+        .accom-visual {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+        .accom-price {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--turquoise);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .accom-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .accom-period { font-size: 14px; color: var(--text-dim); margin-bottom: 30px; }
+        .accom-includes { text-align: left; }
+        .accom-includes li {
+            list-style: none;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 14px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .accom-includes li::before { content: '✓'; color: var(--turquoise); font-weight: 700; }
+
+        /* ============ DESTINATIONS ============ */
+        .dest-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .dest-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+        .dest-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+        .dest-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .dest-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+        .dest-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* ============ RENACE ============ */
+        .renace {
+            background: linear-gradient(160deg, #0D1B2E, #1A0D2E);
+            position: relative;
+        }
+        .renace::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 50%, rgba(138, 79, 255, 0.1), transparent 60%);
+        }
+        .renace .section-inner { position: relative; z-index: 1; }
+        .renace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .renace-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #8A4FFF, #5A2FBF);
+            color: white;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .renace-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .renace-feat {
+            background: rgba(138, 79, 255, 0.08);
+            border: 1px solid rgba(138, 79, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .renace-feat-icon { font-size: 28px; margin-bottom: 8px; }
+        .renace-feat h4 { font-size: 14px; margin-bottom: 4px; }
+        .renace-feat p { font-size: 12px; color: var(--text-dim); }
+
+        /* ============ INVESTMENT ============ */
+        .invest-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .invest-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 36px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+        .invest-card:hover { border-color: var(--gold); }
+        .invest-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .invest-card p { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+        .invest-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        /* ============ CONTACT ============ */
+        .contact { background: var(--ocean-mid); }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+        .contact-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        .contact-info p { font-size: 15px; color: var(--text-light); line-height: 1.7; margin-bottom: 30px; }
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        .contact-detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .contact-form input, .contact-form textarea {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus { border-color: var(--turquoise); }
+        .contact-form textarea { min-height: 120px; resize: vertical; }
+
+        /* ============ FOOTER ============ */
+        footer {
+            padding: 40px 24px;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 20px; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--turquoise); }
+        .footer-copy { font-size: 12px; color: var(--text-dim); }
+        .footer-copy a { color: var(--turquoise); text-decoration: none; }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up {
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards;
+        }
+        .fade-up:nth-child(2) { animation-delay: 0.1s; }
+        .fade-up:nth-child(3) { animation-delay: 0.2s; }
+        .fade-up:nth-child(4) { animation-delay: 0.3s; }
+
+        /* ============ WAVE DECORATION ============ */
+        .wave-divider {
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+        .wave-divider svg {
+            width: 100%;
+            height: 60px;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 900px) {
+            .hero-content { grid-template-columns: 1fr; text-align: center; }
+            .hero-desc { margin-left: auto; margin-right: auto; }
+            .hero-buttons { justify-content: center; }
+            .hero-tag { justify-content: center; }
+            .hero-visual { display: none; }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); }
+            .experiences-grid { grid-template-columns: 1fr; }
+            .accom-grid { grid-template-columns: 1fr; }
+            .dest-grid { grid-template-columns: 1fr; }
+            .renace-grid { grid-template-columns: 1fr; }
+            .invest-grid { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: rgba(10, 22, 40, 0.98);
+                padding: 20px;
+                gap: 16px;
+                border-bottom: 1px solid var(--glass-border);
+            }
+        }
+
+        /* ============ SCROLL REVEAL ============ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LANGUAGE BAR -->
+    <div class="lang-bar">
+        <div class="lang-bar-inner">
+            <span data-i18n="lang-label">Idioma:</span>
+            <button class="lang-btn active" onclick="setLang('es')">ES</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('pt')">PT</button>
+            <button class="lang-btn" onclick="setLang('it')">IT</button>
+            <button class="lang-btn" onclick="setLang('fr')">FR</button>
+            <button class="lang-btn" onclick="setLang('de')">DE</button>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">CBA<em>Container Beach Adventures</em></div>
+            <div class="nav-links" id="navLinks">
+                <a href="#experiences" data-i18n="nav-exp">Experiencias</a>
+                <a href="#accommodations" data-i18n="nav-accom">Alojamiento</a>
+                <a href="#destinations" data-i18n="nav-dest">Destinos</a>
+                <a href="#renace" data-i18n="nav-renace">Renace</a>
+                <a href="#contact" class="nav-cta" data-i18n="nav-contact">Contacto</a>
+            </div>
+            <button class="hamburger" onclick="toggleNav()">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="fade-up">
+                <div class="hero-tag" data-i18n="hero-tag">Turismo Receptivo en Venezuela</div>
+                <h1 data-i18n="hero-title">Donde la <span>aventura</span> se construye con acero y mar</h1>
+                <p class="hero-desc" data-i18n="hero-desc">Experiencias únicas en contenedores de lujo junto al Caribe venezolano. Deportes acuáticos, tours culturales y gastronomía local en un complejo híbrido de 2,000 m².</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn-primary" data-i18n="hero-cta1">Reservar Experiencia</a>
+                    <a href="#experiences" class="btn-outline" data-i18n="hero-cta2">Explorar</a>
+                </div>
+            </div>
+            <div class="hero-visual fade-up">
+                <div class="hero-card">
+                    <div class="container-icon">🏗️</div>
+                    <div class="card-badge">ALL-INCLUSIVE</div>
+                    <div class="hero-card-content">
+                        <h3 data-i18n="hero-card-title">Morón, Carabobo</h3>
+                        <p data-i18n="hero-card-desc">Costa caribeña • Paquetes 1–4 semanas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stats-inner">
+            <div class="reveal">
+                <div class="stat-num">2,000</div>
+                <div class="stat-label">m² <span data-i18n="stat1">de complejo</span></div>
+            </div>
+            <div class="reveal">
+                <div class="stat-num">800</div>
+                <div class="stat-label">m² <span data-i18n="stat2">taller metalúrgico</span></div>
+            </div>
+            <div class="reveal">
+                <div class="stat-num">6</div>
+                <div class="stat-label" data-i18n="stat3">Idiomas soportados</div>
+            </div>
+            <div class="reveal">
+                <div class="stat-num">4</div>
+                <div class="stat-label" data-i18n="stat4">Socios fundadores</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPERIENCES -->
+    <section id="experiences">
+        <div class="section-inner">
+            <div class="section-tag reveal" data-i18n="exp-tag">Experiencias</div>
+            <h2 class="section-title reveal" data-i18n="exp-title">Aventura sin límites</h2>
+            <p class="section-desc reveal" data-i18n="exp-desc">Cada día ofrece una nueva forma de conectar con el mar, la cultura y la naturaleza del Caribe venezolano.</p>
+            <div class="experiences-grid">
+                <div class="exp-card reveal">
+                    <span class="exp-icon">🏄</span>
+                    <h3 data-i18n="exp1-title">Deportes Acuáticos</h3>
+                    <p data-i18n="exp1-desc">Surf, kayak, paddleboard y snorkel en las aguas cristalinas del Caribe. Equipo profesional y guías certificados incluidos.</p>
+                </div>
+                <div class="exp-card reveal">
+                    <span class="exp-icon">🔧</span>
+                    <h3 data-i18n="exp2-title">Taller Industrial</h3>
+                    <p data-i18n="exp2-desc">800 m² de taller metalúrgico equipado. Workshops de soldadura, fabricación y diseño industrial para visitantes curiosos.</p>
+                </div>
+                <div class="exp-card reveal">
+                    <span class="exp-icon">🌴</span>
+                    <h3 data-i18n="exp3-title">Tours Culturales</h3>
+                    <p data-i18n="exp3-desc">Recorridos por pueblos costeros, gastronomía local, música tradicional y contacto genuino con la comunidad venezolana.</p>
+                </div>
+                <div class="exp-card reveal">
+                    <span class="exp-icon">🎣</span>
+                    <h3 data-i18n="exp4-title">Pesca Artesanal</h3>
+                    <p data-i18n="exp4-desc">Acompaña a pescadores locales en faenas auténticas al amanecer. Aprende técnicas tradicionales y cocina tu captura.</p>
+                </div>
+                <div class="exp-card reveal">
+                    <span class="exp-icon">🏕️</span>
+                    <h3 data-i18n="exp5-title">Camping & Fogata</h3>
+                    <p data-i18n="exp5-desc">Noches bajo las estrellas del Caribe con fogatas en la playa, música en vivo y la mejor compañía.</p>
+                </div>
+                <div class="exp-card reveal">
+                    <span class="exp-icon">📸</span>
+                    <h3 data-i18n="exp6-title">Fotografía & Contenido</h3>
+                    <p data-i18n="exp6-desc">Sesiones fotográficas profesionales, creación de contenido para redes sociales y documentación de tu aventura.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACCOMMODATIONS -->
+    <section id="accommodations" class="accommodations">
+        <div class="section-inner">
+            <div class="accom-grid">
+                <div>
+                    <div class="section-tag reveal" data-i18n="accom-tag">Alojamiento</div>
+                    <h2 class="section-title reveal" data-i18n="accom-title">Contenedores de lujo frente al mar</h2>
+                    <p class="section-desc reveal" data-i18n="accom-desc">Unidades habitacionales recicladas y transformadas en espacios modernos, sostenibles y confortables.</p>
+                    <div class="accom-features">
+                        <div class="accom-feat reveal">
+                            <div class="accom-feat-icon">❄️</div>
+                            <div>
+                                <h4 data-i18n="accom-f1-title">Aire acondicionado</h4>
+                                <p data-i18n="accom-f1-desc">Climatización completa en cada unidad para máximo confort tropical.</p>
+                            </div>
+                        </div>
+                        <div class="accom-feat reveal">
+                            <div class="accom-feat-icon">📶</div>
+                            <div>
+                                <h4 data-i18n="accom-f2-title">WiFi de alta velocidad</h4>
+                                <p data-i18n="accom-f2-desc">Conexión estable para trabajo remoto y comunicación.</p>
+                            </div>
+                        </div>
+                        <div class="accom-feat reveal">
+                            <div class="accom-feat-icon">🌊</div>
+                            <div>
+                                <h4 data-i18n="accom-f3-title">Vista al mar</h4>
+                                <p data-i18n="accom-f3-desc">Cada contenedor con terraza privada y vista directa al Caribe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accom-visual reveal">
+                    <div class="accom-price" data-i18n="accom-price-label">Paquete All-Inclusive desde</div>
+                    <div class="accom-amount">$1,200</div>
+                    <div class="accom-period" data-i18n="accom-period">por persona / semana</div>
+                    <ul class="accom-includes">
+                        <li data-i18n="accom-inc1">Alojamiento en contenedor de lujo</li>
+                        <li data-i18n="accom-inc2">Tres comidas diarias (gastronomía local)</li>
+                        <li data-i18n="accom-inc3">Deportes acuáticos incluidos</li>
+                        <li data-i18n="accom-inc4">Tours culturales guiados</li>
+                        <li data-i18n="accom-inc5">Traslado aeropuerto ↔ complejo</li>
+                        <li data-i18n="accom-inc6">Seguro de viaje básico</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DESTINATIONS -->
+    <section id="destinations">
+        <div class="section-inner">
+            <div class="section-tag reveal" data-i18n="dest-tag">Destinos</div>
+            <h2 class="section-title reveal" data-i18n="dest-title">Venezuela te espera</h2>
+            <p class="section-desc reveal" data-i18n="dest-desc">Nuestra plataforma de turismo receptivo cubre los destinos más impresionantes del país.</p>
+            <div class="dest-grid">
+                <div class="dest-card reveal">
+                    <span class="dest-tag" data-i18n="dest1-tag">Base principal</span>
+                    <h3>Morón, Carabobo</h3>
+                    <p data-i18n="dest1-desc">Costa caribeña con acceso directo al mar, sede del complejo CBA y punto de partida para todas las aventuras.</p>
+                </div>
+                <div class="dest-card reveal">
+                    <span class="dest-tag" data-i18n="dest2-tag">Playa paradisíaca</span>
+                    <h3>Morrocoy</h3>
+                    <p data-i18n="dest2-desc">Parque nacional con cayos de arena blanca, manglares y aguas turquesa. A minutos de nuestra base.</p>
+                </div>
+                <div class="dest-card reveal">
+                    <span class="dest-tag" data-i18n="dest3-tag">Montaña & selva</span>
+                    <h3>Henri Pittier</h3>
+                    <p data-i18n="dest3-desc">Parque nacional con selva nublada, aves exóticas y playas vírgenes accesibles por carreteras escénicas.</p>
+                </div>
+                <div class="dest-card reveal">
+                    <span class="dest-tag" data-i18n="dest4-tag">Maravilla natural</span>
+                    <h3>Los Roques</h3>
+                    <p data-i18n="dest4-desc">Archipiélago coralino con las aguas más cristalinas del Caribe. Snorkel, buceo y playas desiertas.</p>
+                </div>
+                <div class="dest-card reveal">
+                    <span class="dest-tag" data-i18n="dest5-tag">Aventura extrema</span>
+                    <h3>Canaima & Salto Ángel</h3>
+                    <p data-i18n="dest5-desc">La caída de agua más alta del mundo en medio de tepuyes milenarios. Una experiencia única en el planeta.</p>
+                </div>
+                <div class="dest-card reveal">
+                    <span class="dest-tag" data-i18n="dest6-tag">Cultura & historia</span>
+                    <h3>Coro & Médanos</h3>
+                    <p data-i18n="dest6-desc">Ciudad colonial Patrimonio UNESCO con dunas desérticas únicas en el Caribe sudamericano.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RENACE -->
+    <section id="renace" class="renace">
+        <div class="section-inner">
+            <div class="renace-grid">
+                <div>
+                    <div class="renace-badge">ECOSISTEMA DIGITAL</div>
+                    <h2 class="section-title reveal" data-i18n="renace-title">Renace — Crecimiento Personal Gamificado</h2>
+                    <p class="section-desc reveal" data-i18n="renace-desc">Plataforma digital de desarrollo personal integrada al ecosistema CBA. Misiones, arquetipos, XP y recompensas reales que transforman el crecimiento en una aventura.</p>
+                    <a href="#contact" class="btn-primary" data-i18n="renace-cta">Saber más</a>
+                </div>
+                <div class="renace-features reveal">
+                    <div class="renace-feat">
+                        <div class="renace-feat-icon">🎯</div>
+                        <h4 data-i18n="renace-f1-title">Misiones</h4>
+                        <p data-i18n="renace-f1-desc">Desafíos diarios personalizados</p>
+                    </div>
+                    <div class="renace-feat">
+                        <div class="renace-feat-icon">⚡</div>
+                        <h4 data-i18n="renace-f2-title">XP & LUX</h4>
+                        <p data-i18n="renace-f2-desc">Moneda dual de progreso</p>
+                    </div>
+                    <div class="renace-feat">
+                        <div class="renace-feat-icon">🏆</div>
+                        <h4 data-i18n="renace-f3-title">Leaderboard</h4>
+                        <p data-i18n="renace-f3-desc">Compite y colabora globalmente</p>
+                    </div>
+                    <div class="renace-feat">
+                        <div class="renace-feat-icon">🎭</div>
+                        <h4 data-i18n="renace-f4-title">Arquetipos</h4>
+                        <p data-i18n="renace-f4-desc">Descubre tu perfil único</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INVESTMENT -->
+    <section id="investment">
+        <div class="section-inner">
+            <div class="section-tag reveal" data-i18n="invest-tag">Inversión</div>
+            <h2 class="section-title reveal" data-i18n="invest-title">Oportunidad de inversión</h2>
+            <p class="section-desc reveal" data-i18n="invest-desc">CBA busca socios estratégicos para escalar la plataforma de turismo receptivo en Venezuela.</p>
+            <div class="invest-grid">
+                <div class="invest-card reveal">
+                    <div class="invest-num">$100K</div>
+                    <h3 data-i18n="invest1-title">Inversión mínima</h3>
+                    <p data-i18n="invest1-desc">Capital inicial requerido para financiar la primera fase del complejo híbrido en Morón.</p>
+                </div>
+                <div class="invest-card reveal">
+                    <div class="invest-num">$130K</div>
+                    <h3 data-i18n="invest2-title">Inversión óptima</h3>
+                    <p data-i18n="invest2-desc">Financiamiento completo incluyendo equipamiento del taller, contenedores y lanzamiento de marketing.</p>
+                </div>
+                <div class="invest-card reveal">
+                    <div class="invest-num">24</div>
+                    <h3 data-i18n="invest3-title" style="font-size:18px">Meses al retorno</h3>
+                    <p data-i18n="invest3-desc">Proyección conservadora de recuperación de inversión basada en ocupación del 60%.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact">
+        <div class="section-inner">
+            <div class="contact-grid">
+                <div class="contact-info reveal">
+                    <div class="section-tag" data-i18n="contact-tag">Contacto</div>
+                    <h3 data-i18n="contact-title">¿Listo para la aventura?</h3>
+                    <p data-i18n="contact-desc">Contáctanos para reservar tu experiencia, explorar oportunidades de inversión o simplemente conocer más sobre CBA.</p>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">📧</div>
+                        <span>venbraproyeccion@gmail.com</span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">📍</div>
+                        <span data-i18n="contact-loc">Morón, Carabobo, Venezuela</span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">🌐</div>
+                        <span>aeg-portfolio-ve.netlify.app</span>
+                    </div>
+                </div>
+                <div class="contact-form reveal">
+                    <input type="text" data-i18n-placeholder="form-name" placeholder="Nombre completo">
+                    <input type="email" data-i18n-placeholder="form-email" placeholder="Correo electrónico">
+                    <input type="text" data-i18n-placeholder="form-subject" placeholder="Asunto">
+                    <textarea data-i18n-placeholder="form-msg" placeholder="Tu mensaje..."></textarea>
+                    <button class="btn-primary" data-i18n="form-send">Enviar mensaje</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">CBA</div>
+            <div class="footer-links">
+                <a href="#experiences" data-i18n="nav-exp">Experiencias</a>
+                <a href="#accommodations" data-i18n="nav-accom">Alojamiento</a>
+                <a href="#destinations" data-i18n="nav-dest">Destinos</a>
+                <a href="#renace" data-i18n="nav-renace">Renace</a>
+                <a href="#contact" data-i18n="nav-contact">Contacto</a>
+            </div>
+            <p class="footer-copy">© 2026 Container Beach Adventures — <span data-i18n="footer-rights">Todos los derechos reservados</span> · <a href="https://aeg-portfolio-ve.netlify.app" data-i18n="footer-by">Desarrollado por AEG</a></p>
+        </div>
+    </footer>
+
+    <script>
+    // ============ TRANSLATIONS ============
+    const translations = {
+        es: {
+            'lang-label': 'Idioma:',
+            'nav-exp': 'Experiencias', 'nav-accom': 'Alojamiento', 'nav-dest': 'Destinos', 'nav-renace': 'Renace', 'nav-contact': 'Contacto',
+            'hero-tag': 'Turismo Receptivo en Venezuela',
+            'hero-title': 'Donde la <span>aventura</span> se construye con acero y mar',
+            'hero-desc': 'Experiencias únicas en contenedores de lujo junto al Caribe venezolano. Deportes acuáticos, tours culturales y gastronomía local en un complejo híbrido de 2,000 m².',
+            'hero-cta1': 'Reservar Experiencia', 'hero-cta2': 'Explorar',
+            'hero-card-title': 'Morón, Carabobo', 'hero-card-desc': 'Costa caribeña • Paquetes 1–4 semanas',
+            'stat1': 'de complejo', 'stat2': 'taller metalúrgico', 'stat3': 'Idiomas soportados', 'stat4': 'Socios fundadores',
+            'exp-tag': 'Experiencias', 'exp-title': 'Aventura sin límites', 'exp-desc': 'Cada día ofrece una nueva forma de conectar con el mar, la cultura y la naturaleza del Caribe venezolano.',
+            'exp1-title': 'Deportes Acuáticos', 'exp1-desc': 'Surf, kayak, paddleboard y snorkel en las aguas cristalinas del Caribe. Equipo profesional y guías certificados incluidos.',
+            'exp2-title': 'Taller Industrial', 'exp2-desc': '800 m² de taller metalúrgico equipado. Workshops de soldadura, fabricación y diseño industrial para visitantes curiosos.',
+            'exp3-title': 'Tours Culturales', 'exp3-desc': 'Recorridos por pueblos costeros, gastronomía local, música tradicional y contacto genuino con la comunidad venezolana.',
+            'exp4-title': 'Pesca Artesanal', 'exp4-desc': 'Acompaña a pescadores locales en faenas auténticas al amanecer. Aprende técnicas tradicionales y cocina tu captura.',
+            'exp5-title': 'Camping & Fogata', 'exp5-desc': 'Noches bajo las estrellas del Caribe con fogatas en la playa, música en vivo y la mejor compañía.',
+            'exp6-title': 'Fotografía & Contenido', 'exp6-desc': 'Sesiones fotográficas profesionales, creación de contenido para redes sociales y documentación de tu aventura.',
+            'accom-tag': 'Alojamiento', 'accom-title': 'Contenedores de lujo frente al mar', 'accom-desc': 'Unidades habitacionales recicladas y transformadas en espacios modernos, sostenibles y confortables.',
+            'accom-f1-title': 'Aire acondicionado', 'accom-f1-desc': 'Climatización completa en cada unidad para máximo confort tropical.',
+            'accom-f2-title': 'WiFi de alta velocidad', 'accom-f2-desc': 'Conexión estable para trabajo remoto y comunicación.',
+            'accom-f3-title': 'Vista al mar', 'accom-f3-desc': 'Cada contenedor con terraza privada y vista directa al Caribe.',
+            'accom-price-label': 'Paquete All-Inclusive desde', 'accom-period': 'por persona / semana',
+            'accom-inc1': 'Alojamiento en contenedor de lujo', 'accom-inc2': 'Tres comidas diarias (gastronomía local)', 'accom-inc3': 'Deportes acuáticos incluidos',
+            'accom-inc4': 'Tours culturales guiados', 'accom-inc5': 'Traslado aeropuerto ↔ complejo', 'accom-inc6': 'Seguro de viaje básico',
+            'dest-tag': 'Destinos', 'dest-title': 'Venezuela te espera', 'dest-desc': 'Nuestra plataforma de turismo receptivo cubre los destinos más impresionantes del país.',
+            'dest1-tag': 'Base principal', 'dest1-desc': 'Costa caribeña con acceso directo al mar, sede del complejo CBA y punto de partida para todas las aventuras.',
+            'dest2-tag': 'Playa paradisíaca', 'dest2-desc': 'Parque nacional con cayos de arena blanca, manglares y aguas turquesa. A minutos de nuestra base.',
+            'dest3-tag': 'Montaña & selva', 'dest3-desc': 'Parque nacional con selva nublada, aves exóticas y playas vírgenes accesibles por carreteras escénicas.',
+            'dest4-tag': 'Maravilla natural', 'dest4-desc': 'Archipiélago coralino con las aguas más cristalinas del Caribe. Snorkel, buceo y playas desiertas.',
+            'dest5-tag': 'Aventura extrema', 'dest5-desc': 'La caída de agua más alta del mundo en medio de tepuyes milenarios. Una experiencia única en el planeta.',
+            'dest6-tag': 'Cultura & historia', 'dest6-desc': 'Ciudad colonial Patrimonio UNESCO con dunas desérticas únicas en el Caribe sudamericano.',
+            'renace-title': 'Renace — Crecimiento Personal Gamificado', 'renace-desc': 'Plataforma digital de desarrollo personal integrada al ecosistema CBA. Misiones, arquetipos, XP y recompensas reales que transforman el crecimiento en una aventura.',
+            'renace-cta': 'Saber más',
+            'renace-f1-title': 'Misiones', 'renace-f1-desc': 'Desafíos diarios personalizados',
+            'renace-f2-title': 'XP & LUX', 'renace-f2-desc': 'Moneda dual de progreso',
+            'renace-f3-title': 'Leaderboard', 'renace-f3-desc': 'Compite y colabora globalmente',
+            'renace-f4-title': 'Arquetipos', 'renace-f4-desc': 'Descubre tu perfil único',
+            'invest-tag': 'Inversión', 'invest-title': 'Oportunidad de inversión', 'invest-desc': 'CBA busca socios estratégicos para escalar la plataforma de turismo receptivo en Venezuela.',
+            'invest1-title': 'Inversión mínima', 'invest1-desc': 'Capital inicial requerido para financiar la primera fase del complejo híbrido en Morón.',
+            'invest2-title': 'Inversión óptima', 'invest2-desc': 'Financiamiento completo incluyendo equipamiento del taller, contenedores y lanzamiento de marketing.',
+            'invest3-title': 'Meses al retorno', 'invest3-desc': 'Proyección conservadora de recuperación de inversión basada en ocupación del 60%.',
+            'contact-tag': 'Contacto', 'contact-title': '¿Listo para la aventura?', 'contact-desc': 'Contáctanos para reservar tu experiencia, explorar oportunidades de inversión o simplemente conocer más sobre CBA.',
+            'contact-loc': 'Morón, Carabobo, Venezuela',
+            'form-name': 'Nombre completo', 'form-email': 'Correo electrónico', 'form-subject': 'Asunto', 'form-msg': 'Tu mensaje...', 'form-send': 'Enviar mensaje',
+            'footer-rights': 'Todos los derechos reservados', 'footer-by': 'Desarrollado por AEG'
+        },
+        en: {
+            'lang-label': 'Language:',
+            'nav-exp': 'Experiences', 'nav-accom': 'Accommodation', 'nav-dest': 'Destinations', 'nav-renace': 'Renace', 'nav-contact': 'Contact',
+            'hero-tag': 'Receptive Tourism in Venezuela',
+            'hero-title': 'Where <span>adventure</span> is built with steel and sea',
+            'hero-desc': 'Unique experiences in luxury containers beside the Venezuelan Caribbean. Water sports, cultural tours and local gastronomy in a 2,000 m² hybrid complex.',
+            'hero-cta1': 'Book Experience', 'hero-cta2': 'Explore',
+            'hero-card-title': 'Morón, Carabobo', 'hero-card-desc': 'Caribbean coast • 1–4 week packages',
+            'stat1': 'complex', 'stat2': 'metalwork workshop', 'stat3': 'Languages supported', 'stat4': 'Founding partners',
+            'exp-tag': 'Experiences', 'exp-title': 'Unlimited adventure', 'exp-desc': 'Every day offers a new way to connect with the sea, culture and nature of the Venezuelan Caribbean.',
+            'exp1-title': 'Water Sports', 'exp1-desc': 'Surfing, kayaking, paddleboarding and snorkeling in the crystal-clear Caribbean. Professional equipment and certified guides included.',
+            'exp2-title': 'Industrial Workshop', 'exp2-desc': '800 m² fully equipped metalwork workshop. Welding, fabrication and industrial design workshops for curious visitors.',
+            'exp3-title': 'Cultural Tours', 'exp3-desc': 'Coastal village tours, local gastronomy, traditional music and genuine connection with the Venezuelan community.',
+            'exp4-title': 'Artisanal Fishing', 'exp4-desc': 'Join local fishermen on authentic dawn expeditions. Learn traditional techniques and cook your catch.',
+            'exp5-title': 'Camping & Bonfire', 'exp5-desc': 'Nights under Caribbean stars with beach bonfires, live music and the best company.',
+            'exp6-title': 'Photography & Content', 'exp6-desc': 'Professional photo sessions, social media content creation and documentation of your adventure.',
+            'accom-tag': 'Accommodation', 'accom-title': 'Luxury containers facing the sea', 'accom-desc': 'Recycled housing units transformed into modern, sustainable and comfortable spaces.',
+            'accom-f1-title': 'Air conditioning', 'accom-f1-desc': 'Full climate control in every unit for maximum tropical comfort.',
+            'accom-f2-title': 'High-speed WiFi', 'accom-f2-desc': 'Stable connection for remote work and communication.',
+            'accom-f3-title': 'Ocean view', 'accom-f3-desc': 'Each container with private terrace and direct Caribbean view.',
+            'accom-price-label': 'All-Inclusive Package from', 'accom-period': 'per person / week',
+            'accom-inc1': 'Luxury container accommodation', 'accom-inc2': 'Three daily meals (local cuisine)', 'accom-inc3': 'Water sports included',
+            'accom-inc4': 'Guided cultural tours', 'accom-inc5': 'Airport ↔ complex transfer', 'accom-inc6': 'Basic travel insurance',
+            'dest-tag': 'Destinations', 'dest-title': 'Venezuela awaits', 'dest-desc': 'Our receptive tourism platform covers the most impressive destinations in the country.',
+            'dest1-tag': 'Main base', 'dest1-desc': 'Caribbean coast with direct sea access, CBA complex headquarters and starting point for all adventures.',
+            'dest2-tag': 'Paradise beach', 'dest2-desc': 'National park with white sand cays, mangroves and turquoise waters. Minutes from our base.',
+            'dest3-tag': 'Mountain & jungle', 'dest3-desc': 'National park with cloud forest, exotic birds and pristine beaches accessible by scenic roads.',
+            'dest4-tag': 'Natural wonder', 'dest4-desc': 'Coral archipelago with the clearest waters in the Caribbean. Snorkeling, diving and deserted beaches.',
+            'dest5-tag': 'Extreme adventure', 'dest5-desc': 'The world\'s highest waterfall amid ancient tepui formations. A one-of-a-kind planetary experience.',
+            'dest6-tag': 'Culture & history', 'dest6-desc': 'UNESCO colonial city with unique desert dunes in the South American Caribbean.',
+            'renace-title': 'Renace — Gamified Personal Growth', 'renace-desc': 'Digital personal development platform integrated into the CBA ecosystem. Missions, archetypes, XP and real rewards that turn growth into an adventure.',
+            'renace-cta': 'Learn more',
+            'renace-f1-title': 'Missions', 'renace-f1-desc': 'Personalized daily challenges',
+            'renace-f2-title': 'XP & LUX', 'renace-f2-desc': 'Dual progress currency',
+            'renace-f3-title': 'Leaderboard', 'renace-f3-desc': 'Compete and collaborate globally',
+            'renace-f4-title': 'Archetypes', 'renace-f4-desc': 'Discover your unique profile',
+            'invest-tag': 'Investment', 'invest-title': 'Investment opportunity', 'invest-desc': 'CBA seeks strategic partners to scale the receptive tourism platform in Venezuela.',
+            'invest1-title': 'Minimum investment', 'invest1-desc': 'Initial capital required to fund the first phase of the hybrid complex in Morón.',
+            'invest2-title': 'Optimal investment', 'invest2-desc': 'Full financing including workshop equipment, containers and marketing launch.',
+            'invest3-title': 'Months to return', 'invest3-desc': 'Conservative ROI projection based on 60% occupancy rate.',
+            'contact-tag': 'Contact', 'contact-title': 'Ready for the adventure?', 'contact-desc': 'Contact us to book your experience, explore investment opportunities or simply learn more about CBA.',
+            'contact-loc': 'Morón, Carabobo, Venezuela',
+            'form-name': 'Full name', 'form-email': 'Email address', 'form-subject': 'Subject', 'form-msg': 'Your message...', 'form-send': 'Send message',
+            'footer-rights': 'All rights reserved', 'footer-by': 'Developed by AEG'
+        },
+        pt: {
+            'lang-label': 'Idioma:',
+            'nav-exp': 'Experiências', 'nav-accom': 'Hospedagem', 'nav-dest': 'Destinos', 'nav-renace': 'Renace', 'nav-contact': 'Contato',
+            'hero-tag': 'Turismo Receptivo na Venezuela',
+            'hero-title': 'Onde a <span>aventura</span> se constrói com aço e mar',
+            'hero-desc': 'Experiências únicas em contêineres de luxo junto ao Caribe venezuelano. Esportes aquáticos, tours culturais e gastronomia local em um complexo híbrido de 2.000 m².',
+            'hero-cta1': 'Reservar Experiência', 'hero-cta2': 'Explorar',
+            'hero-card-title': 'Morón, Carabobo', 'hero-card-desc': 'Costa caribenha • Pacotes 1–4 semanas',
+            'stat1': 'de complexo', 'stat2': 'oficina metalúrgica', 'stat3': 'Idiomas suportados', 'stat4': 'Sócios fundadores',
+            'exp-tag': 'Experiências', 'exp-title': 'Aventura sem limites', 'exp-desc': 'Cada dia oferece uma nova forma de conectar com o mar, a cultura e a natureza do Caribe venezuelano.',
+            'exp1-title': 'Esportes Aquáticos', 'exp1-desc': 'Surf, caiaque, stand-up paddle e snorkel nas águas cristalinas do Caribe. Equipamento profissional e guias certificados incluídos.',
+            'exp2-title': 'Oficina Industrial', 'exp2-desc': '800 m² de oficina metalúrgica equipada. Workshops de soldagem, fabricação e design industrial para visitantes curiosos.',
+            'exp3-title': 'Tours Culturais', 'exp3-desc': 'Passeios por vilas costeiras, gastronomia local, música tradicional e contato genuíno com a comunidade venezuelana.',
+            'exp4-title': 'Pesca Artesanal', 'exp4-desc': 'Acompanhe pescadores locais em jornadas autênticas ao amanhecer. Aprenda técnicas tradicionais e cozinhe sua captura.',
+            'exp5-title': 'Camping & Fogueira', 'exp5-desc': 'Noites sob as estrelas do Caribe com fogueiras na praia, música ao vivo e a melhor companhia.',
+            'exp6-title': 'Fotografia & Conteúdo', 'exp6-desc': 'Sessões fotográficas profissionais, criação de conteúdo para redes sociais e documentação da sua aventura.',
+            'accom-tag': 'Hospedagem', 'accom-title': 'Contêineres de luxo frente ao mar', 'accom-desc': 'Unidades habitacionais recicladas e transformadas em espaços modernos, sustentáveis e confortáveis.',
+            'accom-f1-title': 'Ar condicionado', 'accom-f1-desc': 'Climatização completa em cada unidade para máximo conforto tropical.',
+            'accom-f2-title': 'WiFi de alta velocidade', 'accom-f2-desc': 'Conexão estável para trabalho remoto e comunicação.',
+            'accom-f3-title': 'Vista para o mar', 'accom-f3-desc': 'Cada contêiner com terraço privado e vista direta para o Caribe.',
+            'accom-price-label': 'Pacote All-Inclusive a partir de', 'accom-period': 'por pessoa / semana',
+            'accom-inc1': 'Hospedagem em contêiner de luxo', 'accom-inc2': 'Três refeições diárias (gastronomia local)', 'accom-inc3': 'Esportes aquáticos incluídos',
+            'accom-inc4': 'Tours culturais guiados', 'accom-inc5': 'Transfer aeroporto ↔ complexo', 'accom-inc6': 'Seguro viagem básico',
+            'dest-tag': 'Destinos', 'dest-title': 'A Venezuela te espera', 'dest-desc': 'Nossa plataforma de turismo receptivo cobre os destinos mais impressionantes do país.',
+            'dest1-tag': 'Base principal', 'dest1-desc': 'Costa caribenha com acesso direto ao mar, sede do complexo CBA e ponto de partida para todas as aventuras.',
+            'dest2-tag': 'Praia paradisíaca', 'dest2-desc': 'Parque nacional com cayos de areia branca, manguezais e águas turquesa. A minutos da nossa base.',
+            'dest3-tag': 'Montanha & selva', 'dest3-desc': 'Parque nacional com floresta nublada, aves exóticas e praias virgens acessíveis por estradas cênicas.',
+            'dest4-tag': 'Maravilha natural', 'dest4-desc': 'Arquipélago de coral com as águas mais cristalinas do Caribe. Snorkel, mergulho e praias desertas.',
+            'dest5-tag': 'Aventura extrema', 'dest5-desc': 'A queda d\'água mais alta do mundo em meio a tepuis milenares. Uma experiência única no planeta.',
+            'dest6-tag': 'Cultura & história', 'dest6-desc': 'Cidade colonial Patrimônio UNESCO com dunas desérticas únicas no Caribe sul-americano.',
+            'renace-title': 'Renace — Crescimento Pessoal Gamificado', 'renace-desc': 'Plataforma digital de desenvolvimento pessoal integrada ao ecossistema CBA. Missões, arquétipos, XP e recompensas reais que transformam o crescimento em uma aventura.',
+            'renace-cta': 'Saiba mais',
+            'renace-f1-title': 'Missões', 'renace-f1-desc': 'Desafios diários personalizados',
+            'renace-f2-title': 'XP & LUX', 'renace-f2-desc': 'Moeda dual de progresso',
+            'renace-f3-title': 'Leaderboard', 'renace-f3-desc': 'Compita e colabore globalmente',
+            'renace-f4-title': 'Arquétipos', 'renace-f4-desc': 'Descubra seu perfil único',
+            'invest-tag': 'Investimento', 'invest-title': 'Oportunidade de investimento', 'invest-desc': 'CBA busca parceiros estratégicos para escalar a plataforma de turismo receptivo na Venezuela.',
+            'invest1-title': 'Investimento mínimo', 'invest1-desc': 'Capital inicial necessário para financiar a primeira fase do complexo híbrido em Morón.',
+            'invest2-title': 'Investimento ótimo', 'invest2-desc': 'Financiamento completo incluindo equipamento da oficina, contêineres e lançamento de marketing.',
+            'invest3-title': 'Meses para retorno', 'invest3-desc': 'Projeção conservadora de recuperação de investimento baseada em ocupação de 60%.',
+            'contact-tag': 'Contato', 'contact-title': 'Pronto para a aventura?', 'contact-desc': 'Entre em contato para reservar sua experiência, explorar oportunidades de investimento ou simplesmente saber mais sobre CBA.',
+            'contact-loc': 'Morón, Carabobo, Venezuela',
+            'form-name': 'Nome completo', 'form-email': 'Endereço de email', 'form-subject': 'Assunto', 'form-msg': 'Sua mensagem...', 'form-send': 'Enviar mensagem',
+            'footer-rights': 'Todos os direitos reservados', 'footer-by': 'Desenvolvido por AEG'
+        },
+        it: {
+            'lang-label': 'Lingua:',
+            'nav-exp': 'Esperienze', 'nav-accom': 'Alloggio', 'nav-dest': 'Destinazioni', 'nav-renace': 'Renace', 'nav-contact': 'Contatto',
+            'hero-tag': 'Turismo Ricettivo in Venezuela',
+            'hero-title': 'Dove l\'<span>avventura</span> si costruisce con acciaio e mare',
+            'hero-desc': 'Esperienze uniche in container di lusso accanto ai Caraibi venezuelani. Sport acquatici, tour culturali e gastronomia locale in un complesso ibrido di 2.000 m².',
+            'hero-cta1': 'Prenota Esperienza', 'hero-cta2': 'Esplora',
+            'hero-card-title': 'Morón, Carabobo', 'hero-card-desc': 'Costa caraibica • Pacchetti 1–4 settimane',
+            'stat1': 'di complesso', 'stat2': 'officina metallurgica', 'stat3': 'Lingue supportate', 'stat4': 'Soci fondatori',
+            'exp-tag': 'Esperienze', 'exp-title': 'Avventura senza limiti', 'exp-desc': 'Ogni giorno offre un nuovo modo di connettersi con il mare, la cultura e la natura dei Caraibi venezuelani.',
+            'exp1-title': 'Sport Acquatici', 'exp1-desc': 'Surf, kayak, paddleboard e snorkeling nelle acque cristalline dei Caraibi.',
+            'exp2-title': 'Officina Industriale', 'exp2-desc': '800 m² di officina metallurgica attrezzata. Workshop per visitatori curiosi.',
+            'exp3-title': 'Tour Culturali', 'exp3-desc': 'Visite ai villaggi costieri, gastronomia locale e contatto genuino con la comunità.',
+            'exp4-title': 'Pesca Artigianale', 'exp4-desc': 'Accompagna i pescatori locali all\'alba. Impara tecniche tradizionali.',
+            'exp5-title': 'Campeggio & Falò', 'exp5-desc': 'Notti sotto le stelle dei Caraibi con falò in spiaggia e musica dal vivo.',
+            'exp6-title': 'Fotografia & Contenuti', 'exp6-desc': 'Sessioni fotografiche professionali e creazione di contenuti per i social.',
+            'accom-tag': 'Alloggio', 'accom-title': 'Container di lusso fronte mare', 'accom-desc': 'Unità abitative riciclate e trasformate in spazi moderni e confortevoli.',
+            'accom-f1-title': 'Aria condizionata', 'accom-f1-desc': 'Climatizzazione completa in ogni unità.',
+            'accom-f2-title': 'WiFi alta velocità', 'accom-f2-desc': 'Connessione stabile per lavoro remoto.',
+            'accom-f3-title': 'Vista mare', 'accom-f3-desc': 'Ogni container con terrazza privata e vista diretta sui Caraibi.',
+            'accom-price-label': 'Pacchetto All-Inclusive da', 'accom-period': 'a persona / settimana',
+            'accom-inc1': 'Alloggio in container di lusso', 'accom-inc2': 'Tre pasti giornalieri', 'accom-inc3': 'Sport acquatici inclusi',
+            'accom-inc4': 'Tour culturali guidati', 'accom-inc5': 'Transfer aeroporto ↔ complesso', 'accom-inc6': 'Assicurazione viaggio base',
+            'dest-tag': 'Destinazioni', 'dest-title': 'Il Venezuela ti aspetta', 'dest-desc': 'La nostra piattaforma copre le destinazioni più impressionanti del paese.',
+            'dest1-tag': 'Base principale', 'dest1-desc': 'Costa caraibica con accesso diretto al mare, sede del complesso CBA.',
+            'dest2-tag': 'Spiaggia paradisiaca', 'dest2-desc': 'Parco nazionale con cayos di sabbia bianca e acque turchesi.',
+            'dest3-tag': 'Montagna & giungla', 'dest3-desc': 'Parco nazionale con foresta nebulosa e spiagge vergini.',
+            'dest4-tag': 'Meraviglia naturale', 'dest4-desc': 'Arcipelago corallino con le acque più cristalline dei Caraibi.',
+            'dest5-tag': 'Avventura estrema', 'dest5-desc': 'La cascata più alta del mondo tra antichi tepui.',
+            'dest6-tag': 'Cultura & storia', 'dest6-desc': 'Città coloniale UNESCO con dune desertiche uniche nei Caraibi.',
+            'renace-title': 'Renace — Crescita Personale Gamificata', 'renace-desc': 'Piattaforma digitale di sviluppo personale integrata nell\'ecosistema CBA.',
+            'renace-cta': 'Scopri di più',
+            'renace-f1-title': 'Missioni', 'renace-f1-desc': 'Sfide giornaliere personalizzate',
+            'renace-f2-title': 'XP & LUX', 'renace-f2-desc': 'Valuta duale di progresso',
+            'renace-f3-title': 'Classifica', 'renace-f3-desc': 'Competi e collabora globalmente',
+            'renace-f4-title': 'Archetipi', 'renace-f4-desc': 'Scopri il tuo profilo unico',
+            'invest-tag': 'Investimento', 'invest-title': 'Opportunità di investimento', 'invest-desc': 'CBA cerca partner strategici per scalare la piattaforma.',
+            'invest1-title': 'Investimento minimo', 'invest1-desc': 'Capitale iniziale per la prima fase del complesso.',
+            'invest2-title': 'Investimento ottimale', 'invest2-desc': 'Finanziamento completo incluso officina e container.',
+            'invest3-title': 'Mesi al ritorno', 'invest3-desc': 'Proiezione conservativa basata su occupazione del 60%.',
+            'contact-tag': 'Contatto', 'contact-title': 'Pronto per l\'avventura?', 'contact-desc': 'Contattaci per prenotare, esplorare investimenti o saperne di più.',
+            'contact-loc': 'Morón, Carabobo, Venezuela',
+            'form-name': 'Nome completo', 'form-email': 'Indirizzo email', 'form-subject': 'Oggetto', 'form-msg': 'Il tuo messaggio...', 'form-send': 'Invia messaggio',
+            'footer-rights': 'Tutti i diritti riservati', 'footer-by': 'Sviluppato da AEG'
+        },
+        fr: {
+            'lang-label': 'Langue :',
+            'nav-exp': 'Expériences', 'nav-accom': 'Hébergement', 'nav-dest': 'Destinations', 'nav-renace': 'Renace', 'nav-contact': 'Contact',
+            'hero-tag': 'Tourisme Réceptif au Venezuela',
+            'hero-title': 'Où l\'<span>aventure</span> se construit avec acier et mer',
+            'hero-desc': 'Expériences uniques dans des conteneurs de luxe aux Caraïbes vénézuéliennes. Sports nautiques, tours culturels et gastronomie locale dans un complexe de 2 000 m².',
+            'hero-cta1': 'Réserver', 'hero-cta2': 'Explorer',
+            'hero-card-title': 'Morón, Carabobo', 'hero-card-desc': 'Côte caraïbe • Forfaits 1–4 semaines',
+            'stat1': 'de complexe', 'stat2': 'atelier métallurgique', 'stat3': 'Langues supportées', 'stat4': 'Associés fondateurs',
+            'exp-tag': 'Expériences', 'exp-title': 'Aventure sans limites', 'exp-desc': 'Chaque jour offre une nouvelle façon de se connecter avec la mer et la culture des Caraïbes.',
+            'exp1-title': 'Sports Nautiques', 'exp1-desc': 'Surf, kayak, paddle et plongée dans les eaux cristallines des Caraïbes.',
+            'exp2-title': 'Atelier Industriel', 'exp2-desc': '800 m² d\'atelier métallurgique équipé. Ateliers pour visiteurs curieux.',
+            'exp3-title': 'Tours Culturels', 'exp3-desc': 'Visites de villages côtiers, gastronomie locale et contact authentique.',
+            'exp4-title': 'Pêche Artisanale', 'exp4-desc': 'Accompagnez les pêcheurs locaux à l\'aube.',
+            'exp5-title': 'Camping & Feu de camp', 'exp5-desc': 'Nuits sous les étoiles des Caraïbes avec feux de camp sur la plage.',
+            'exp6-title': 'Photographie & Contenu', 'exp6-desc': 'Séances photo professionnelles et création de contenu pour les réseaux.',
+            'accom-tag': 'Hébergement', 'accom-title': 'Conteneurs de luxe face à la mer', 'accom-desc': 'Unités d\'habitation recyclées et transformées en espaces modernes.',
+            'accom-f1-title': 'Climatisation', 'accom-f1-desc': 'Climatisation complète dans chaque unité.',
+            'accom-f2-title': 'WiFi haut débit', 'accom-f2-desc': 'Connexion stable pour le télétravail.',
+            'accom-f3-title': 'Vue sur la mer', 'accom-f3-desc': 'Chaque conteneur avec terrasse privée et vue directe.',
+            'accom-price-label': 'Forfait All-Inclusive à partir de', 'accom-period': 'par personne / semaine',
+            'accom-inc1': 'Hébergement en conteneur de luxe', 'accom-inc2': 'Trois repas quotidiens', 'accom-inc3': 'Sports nautiques inclus',
+            'accom-inc4': 'Tours culturels guidés', 'accom-inc5': 'Transfert aéroport ↔ complexe', 'accom-inc6': 'Assurance voyage de base',
+            'dest-tag': 'Destinations', 'dest-title': 'Le Venezuela vous attend', 'dest-desc': 'Notre plateforme couvre les destinations les plus impressionnantes du pays.',
+            'dest1-tag': 'Base principale', 'dest1-desc': 'Côte caraïbe avec accès direct à la mer, siège du complexe CBA.',
+            'dest2-tag': 'Plage paradisiaque', 'dest2-desc': 'Parc national avec cayos de sable blanc et eaux turquoise.',
+            'dest3-tag': 'Montagne & jungle', 'dest3-desc': 'Parc national avec forêt de nuages et plages vierges.',
+            'dest4-tag': 'Merveille naturelle', 'dest4-desc': 'Archipel corallien aux eaux les plus cristallines des Caraïbes.',
+            'dest5-tag': 'Aventure extrême', 'dest5-desc': 'La plus haute chute d\'eau du monde parmi les tepuis millénaires.',
+            'dest6-tag': 'Culture & histoire', 'dest6-desc': 'Ville coloniale UNESCO avec des dunes désertiques uniques.',
+            'renace-title': 'Renace — Croissance Personnelle Gamifiée', 'renace-desc': 'Plateforme digitale de développement personnel intégrée à l\'écosystème CBA.',
+            'renace-cta': 'En savoir plus',
+            'renace-f1-title': 'Missions', 'renace-f1-desc': 'Défis quotidiens personnalisés',
+            'renace-f2-title': 'XP & LUX', 'renace-f2-desc': 'Monnaie duale de progression',
+            'renace-f3-title': 'Classement', 'renace-f3-desc': 'Compétition et collaboration mondiale',
+            'renace-f4-title': 'Archétypes', 'renace-f4-desc': 'Découvrez votre profil unique',
+            'invest-tag': 'Investissement', 'invest-title': 'Opportunité d\'investissement', 'invest-desc': 'CBA recherche des partenaires stratégiques.',
+            'invest1-title': 'Investissement minimum', 'invest1-desc': 'Capital initial pour la première phase du complexe.',
+            'invest2-title': 'Investissement optimal', 'invest2-desc': 'Financement complet incluant atelier et conteneurs.',
+            'invest3-title': 'Mois au retour', 'invest3-desc': 'Projection conservatrice basée sur 60% d\'occupation.',
+            'contact-tag': 'Contact', 'contact-title': 'Prêt pour l\'aventure ?', 'contact-desc': 'Contactez-nous pour réserver, explorer les investissements ou en savoir plus.',
+            'contact-loc': 'Morón, Carabobo, Venezuela',
+            'form-name': 'Nom complet', 'form-email': 'Adresse email', 'form-subject': 'Objet', 'form-msg': 'Votre message...', 'form-send': 'Envoyer',
+            'footer-rights': 'Tous droits réservés', 'footer-by': 'Développé par AEG'
+        },
+        de: {
+            'lang-label': 'Sprache:',
+            'nav-exp': 'Erlebnisse', 'nav-accom': 'Unterkunft', 'nav-dest': 'Reiseziele', 'nav-renace': 'Renace', 'nav-contact': 'Kontakt',
+            'hero-tag': 'Empfangstourismus in Venezuela',
+            'hero-title': 'Wo <span>Abenteuer</span> mit Stahl und Meer gebaut wird',
+            'hero-desc': 'Einzigartige Erlebnisse in Luxus-Containern an der venezolanischen Karibik. Wassersport, Kulturtouren und lokale Gastronomie in einem 2.000 m² Hybridkomplex.',
+            'hero-cta1': 'Erlebnis buchen', 'hero-cta2': 'Erkunden',
+            'hero-card-title': 'Morón, Carabobo', 'hero-card-desc': 'Karibikküste • 1–4 Wochen Pakete',
+            'stat1': 'Komplex', 'stat2': 'Metallwerkstatt', 'stat3': 'Unterstützte Sprachen', 'stat4': 'Gründungspartner',
+            'exp-tag': 'Erlebnisse', 'exp-title': 'Abenteuer ohne Grenzen', 'exp-desc': 'Jeden Tag neue Möglichkeiten, sich mit dem Meer und der Kultur der venezolanischen Karibik zu verbinden.',
+            'exp1-title': 'Wassersport', 'exp1-desc': 'Surfen, Kajakfahren, Paddleboard und Schnorcheln im kristallklaren Wasser der Karibik.',
+            'exp2-title': 'Industriewerkstatt', 'exp2-desc': '800 m² ausgestattete Metallwerkstatt. Workshops für neugierige Besucher.',
+            'exp3-title': 'Kulturtouren', 'exp3-desc': 'Besuche in Küstendörfern, lokale Gastronomie und authentischer Kontakt.',
+            'exp4-title': 'Traditioneller Fischfang', 'exp4-desc': 'Begleiten Sie lokale Fischer bei authentischen Fahrten in der Morgendämmerung.',
+            'exp5-title': 'Camping & Lagerfeuer', 'exp5-desc': 'Nächte unter den Sternen der Karibik mit Lagerfeuern am Strand.',
+            'exp6-title': 'Fotografie & Content', 'exp6-desc': 'Professionelle Fotosessions und Content-Erstellung für Social Media.',
+            'accom-tag': 'Unterkunft', 'accom-title': 'Luxus-Container am Meer', 'accom-desc': 'Recycelte Wohneinheiten, umgewandelt in moderne und komfortable Räume.',
+            'accom-f1-title': 'Klimaanlage', 'accom-f1-desc': 'Vollklimatisierung in jeder Einheit.',
+            'accom-f2-title': 'Highspeed-WiFi', 'accom-f2-desc': 'Stabile Verbindung für Remote-Arbeit.',
+            'accom-f3-title': 'Meerblick', 'accom-f3-desc': 'Jeder Container mit privater Terrasse und direktem Karibikblick.',
+            'accom-price-label': 'All-Inclusive-Paket ab', 'accom-period': 'pro Person / Woche',
+            'accom-inc1': 'Luxus-Container-Unterkunft', 'accom-inc2': 'Drei tägliche Mahlzeiten', 'accom-inc3': 'Wassersport inklusive',
+            'accom-inc4': 'Geführte Kulturtouren', 'accom-inc5': 'Transfer Flughafen ↔ Komplex', 'accom-inc6': 'Basis-Reiseversicherung',
+            'dest-tag': 'Reiseziele', 'dest-title': 'Venezuela erwartet Sie', 'dest-desc': 'Unsere Plattform deckt die beeindruckendsten Reiseziele des Landes ab.',
+            'dest1-tag': 'Hauptbasis', 'dest1-desc': 'Karibikküste mit direktem Meerzugang, Sitz des CBA-Komplexes.',
+            'dest2-tag': 'Paradiesstrand', 'dest2-desc': 'Nationalpark mit weißen Sandinseln und türkisfarbenem Wasser.',
+            'dest3-tag': 'Berg & Dschungel', 'dest3-desc': 'Nationalpark mit Nebelwald und unberührten Stränden.',
+            'dest4-tag': 'Naturwunder', 'dest4-desc': 'Korallenarchipel mit dem klarsten Wasser der Karibik.',
+            'dest5-tag': 'Extremabenteuer', 'dest5-desc': 'Der höchste Wasserfall der Welt inmitten uralter Tafelberge.',
+            'dest6-tag': 'Kultur & Geschichte', 'dest6-desc': 'UNESCO-Kolonialstadt mit einzigartigen Wüstendünen.',
+            'renace-title': 'Renace — Gamifiziertes persönliches Wachstum', 'renace-desc': 'Digitale Plattform für persönliche Entwicklung im CBA-Ökosystem.',
+            'renace-cta': 'Mehr erfahren',
+            'renace-f1-title': 'Missionen', 'renace-f1-desc': 'Personalisierte tägliche Herausforderungen',
+            'renace-f2-title': 'XP & LUX', 'renace-f2-desc': 'Duale Fortschrittswährung',
+            'renace-f3-title': 'Rangliste', 'renace-f3-desc': 'Weltweit konkurrieren und zusammenarbeiten',
+            'renace-f4-title': 'Archetypen', 'renace-f4-desc': 'Entdecken Sie Ihr einzigartiges Profil',
+            'invest-tag': 'Investition', 'invest-title': 'Investitionsmöglichkeit', 'invest-desc': 'CBA sucht strategische Partner.',
+            'invest1-title': 'Mindestinvestition', 'invest1-desc': 'Anfangskapital für die erste Phase des Komplexes.',
+            'invest2-title': 'Optimale Investition', 'invest2-desc': 'Vollfinanzierung inklusive Werkstatt und Container.',
+            'invest3-title': 'Monate bis zur Rendite', 'invest3-desc': 'Konservative Prognose bei 60% Auslastung.',
+            'contact-tag': 'Kontakt', 'contact-title': 'Bereit für das Abenteuer?', 'contact-desc': 'Kontaktieren Sie uns für Buchungen, Investitionen oder weitere Informationen.',
+            'contact-loc': 'Morón, Carabobo, Venezuela',
+            'form-name': 'Vollständiger Name', 'form-email': 'E-Mail-Adresse', 'form-subject': 'Betreff', 'form-msg': 'Ihre Nachricht...', 'form-send': 'Nachricht senden',
+            'footer-rights': 'Alle Rechte vorbehalten', 'footer-by': 'Entwickelt von AEG'
+        }
+    };
+
+    let currentLang = 'es';
+
+    function setLang(lang) {
+        currentLang = lang;
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+        document.documentElement.lang = lang;
+
+        const t = translations[lang];
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (t[key]) el.innerHTML = t[key];
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (t[key]) el.placeholder = t[key];
+        });
+    }
+
+    // ============ NAV TOGGLE ============
+    function toggleNav() {
+        document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // ============ SCROLL REVEAL ============
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ============ SMOOTH SCROLL ============
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('navLinks').classList.remove('active');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
