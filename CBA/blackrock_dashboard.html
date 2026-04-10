@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBA — BlackRock Investment Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0A0F1A;
+  --ink-mid: #122A4A;
+  --teal: #00C9A7;
+  --teal-dim: #00A389;
+  --gold: #D4A853;
+  --gold-light: #F0D78C;
+  --coral: #FF6B5A;
+  --white: #FAFAF8;
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.08);
+  --text-dim: rgba(250,250,248,0.5);
+  --text-mid: rgba(250,250,248,0.75);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--ink);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── COVER ── */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 10vw;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(0,201,167,0.12), transparent 55%),
+    radial-gradient(ellipse at 20% 80%, rgba(212,168,83,0.08), transparent 55%);
+}
+.cover-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cover-eyebrow::before {
+  content: '';
+  width: 48px;
+  height: 1px;
+  background: var(--teal);
+}
+.cover h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 8vw, 100px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  position: relative;
+  margin-bottom: 8px;
+}
+.cover h1 em {
+  font-style: italic;
+  color: var(--teal);
+}
+.cover-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 2.5vw, 28px);
+  font-weight: 300;
+  color: var(--text-mid);
+  margin-bottom: 48px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.cover-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cover-meta-item .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.cover-meta-item .value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gold);
+}
+.cover-scroll {
+  position: absolute;
+  bottom: 40px;
+  right: 10vw;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cover-scroll::after {
+  content: '';
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--teal), transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ── SECTION LAYOUT ── */
+.section {
+  padding: 100px 10vw;
+  position: relative;
+  border-top: 1px solid var(--glass-border);
+}
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-number::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--teal);
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 300;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.section-title strong { color: var(--teal); font-weight: 600; }
+.section-desc {
+  font-size: 15px;
+  color: var(--text-mid);
+  line-height: 1.8;
+  max-width: 600px;
+  margin-bottom: 60px;
+}
+
+/* ── ESG DASHBOARD ── */
+.esg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+  background: var(--glass-border);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+.esg-pillar {
+  background: var(--glass);
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.4s;
+}
+.esg-pillar:hover { background: rgba(255,255,255,0.07); }
+.esg-pillar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.esg-pillar.env::before { background: linear-gradient(90deg, var(--teal), #00FFD1); }
+.esg-pillar.soc::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.esg-pillar.gov::before { background: linear-gradient(90deg, var(--coral), #FF9A8B); }
+.esg-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+  opacity: 0.08;
+  position: absolute;
+  top: 20px; right: 24px;
+}
+.esg-pillar.env .esg-letter { color: var(--teal); }
+.esg-pillar.soc .esg-letter { color: var(--gold); }
+.esg-pillar.gov .esg-letter { color: var(--coral); }
+.esg-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: block;
+}
+.esg-pillar.env .esg-tag { color: var(--teal); }
+.esg-pillar.soc .esg-tag { color: var(--gold); }
+.esg-pillar.gov .esg-tag { color: var(--coral); }
+.esg-pillar h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.esg-items { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.esg-items li {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.6;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.esg-items li::before {
+  content: '→';
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.esg-pillar.env .esg-items li::before { color: var(--teal); }
+.esg-pillar.soc .esg-items li::before { color: var(--gold); }
+.esg-pillar.gov .esg-items li::before { color: var(--coral); }
+.esg-score-bar {
+  margin-top: 24px;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.esg-score-fill {
+  height: 100%;
+  border-radius: 2px;
+  animation: fillBar 2s ease-out forwards;
+}
+.esg-pillar.env .esg-score-fill { background: var(--teal); width: 88%; }
+.esg-pillar.soc .esg-score-fill { background: var(--gold); width: 82%; }
+.esg-pillar.gov .esg-score-fill { background: var(--coral); width: 75%; }
+@keyframes fillBar {
+  from { width: 0 !important; }
+}
+.esg-score-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ── FINANCIAL FLOW ── */
+.flow-container {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  margin-bottom: 60px;
+}
+.flow-node {
+  flex-shrink: 0;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  min-width: 160px;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s;
+}
+.flow-node:hover {
+  border-color: var(--teal);
+  background: rgba(0,201,167,0.05);
+  transform: translateY(-4px);
+}
+.flow-node.highlight {
+  border-color: var(--gold);
+  background: rgba(212,168,83,0.08);
+}
+.flow-node-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+.flow-node-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--teal);
+  display: block;
+  margin-bottom: 4px;
+}
+.flow-node.highlight .flow-node-value { color: var(--gold); }
+.flow-node-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.flow-arrow {
+  flex-shrink: 0;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--teal);
+  font-size: 20px;
+  opacity: 0.4;
+}
+
+/* ── TAM/SAM/SOM ── */
+.tam-visual {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.tam-circles {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  flex-shrink: 0;
+}
+.tam-circle {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.tam-circle.tam {
+  width: 320px; height: 320px;
+  top: 0; left: 0;
+  background: rgba(0,201,167,0.04);
+  border: 1px solid rgba(0,201,167,0.2);
+}
+.tam-circle.sam {
+  width: 220px; height: 220px;
+  top: 50px; left: 50px;
+  background: rgba(0,201,167,0.06);
+  border: 1px solid rgba(0,201,167,0.35);
+}
+.tam-circle.som {
+  width: 120px; height: 120px;
+  top: 100px; left: 100px;
+  background: rgba(0,201,167,0.12);
+  border: 2px solid var(--teal);
+}
+.tam-circle-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.tam-circle-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+}
+.tam-legend { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.tam-legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.tam-legend-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.tam-legend-item:nth-child(1) .tam-legend-dot { background: rgba(0,201,167,0.3); border: 1px solid rgba(0,201,167,0.4); }
+.tam-legend-item:nth-child(2) .tam-legend-dot { background: rgba(0,201,167,0.5); border: 1px solid rgba(0,201,167,0.6); }
+.tam-legend-item:nth-child(3) .tam-legend-dot { background: var(--teal); }
+.tam-legend-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.tam-legend-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.tam-legend-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ── IRR/NPV CHART ── */
+.chart-area {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 40px;
+}
+.chart-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.chart-svg-wrap { width: 100%; overflow: hidden; }
+svg.irr-chart { width: 100%; height: 220px; }
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.kpi-cell {
+  background: var(--glass);
+  padding: 28px 24px;
+  text-align: center;
+  transition: background 0.3s;
+}
+.kpi-cell:hover { background: rgba(255,255,255,0.07); }
+.kpi-cell-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--teal);
+  display: block;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+.kpi-cell-value.gold { color: var(--gold); }
+.kpi-cell-value.coral { color: var(--coral); }
+.kpi-cell-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+/* ── RISK MATRIX ── */
+.risk-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.risk-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.risk-card:hover { transform: translateY(-3px); }
+.risk-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.risk-card.high::before { background: var(--coral); }
+.risk-card.medium::before { background: var(--gold); }
+.risk-card.low::before { background: var(--teal); }
+.risk-level {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+.risk-card.high .risk-level { color: var(--coral); }
+.risk-card.medium .risk-level { color: var(--gold); }
+.risk-card.low .risk-level { color: var(--teal); }
+.risk-card h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.risk-card p {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.risk-mitigation {
+  font-size: 11px;
+  color: var(--teal);
+  line-height: 1.5;
+  padding-top: 12px;
+  border-top: 1px solid var(--glass-border);
+}
+.risk-mitigation strong { color: var(--white); }
+
+/* ── LANG BAR ── */
+.lang-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(10,15,26,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 8px 0;
+}
+.lang-bar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 10vw;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  align-items: center;
+}
+.lang-btn {
+  background: none;
+  border: 1px solid var(--glass-border);
+  color: var(--text-dim);
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+.lang-btn:hover, .lang-btn.active {
+  color: var(--teal);
+  border-color: var(--teal);
+}
+.lang-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-right: 4px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 60px 10vw;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--teal);
+}
+.footer-info {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-align: right;
+  line-height: 2;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .esg-grid { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; align-items: stretch; }
+  .flow-arrow { transform: rotate(90deg); }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .risk-matrix { grid-template-columns: 1fr; }
+  .tam-visual { flex-direction: column; }
+}
+
+/* ── ANIMATIONS ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- LANG BAR -->
+<div class="lang-bar">
+  <div class="lang-bar-inner">
+    <span class="lang-label" id="lbl-lang">Language:</span>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('es')">ES</button>
+    <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" onclick="setLang('it')">IT</button>
+  </div>
+</div>
+
+<!-- COVER -->
+<section class="cover" style="padding-top: 120px;">
+  <div class="cover-eyebrow" data-i18n="cover-eyebrow">Institutional Investment Deck · April 2026</div>
+  <h1>Container<br><em>Beach</em><br>Adventures</h1>
+  <p class="cover-sub" data-i18n="cover-sub">Receptive Tourism Platform · Morón, Carabobo, Venezuela</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="label" data-i18n="meta-req">Capital Required</span>
+      <span class="value">$115K USD</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label" data-i18n="meta-irr">Projected IRR</span>
+      <span class="value">38%</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label" data-i18n="meta-npv">NPV 5Y</span>
+      <span class="value">$771K</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label" data-i18n="meta-payback">Payback</span>
+      <span class="value">24 mo.</span>
+    </div>
+  </div>
+  <div class="cover-scroll" data-i18n="cover-scroll">Scroll</div>
+</section>
+
+<!-- 1. ESG DASHBOARD -->
+<section class="section fade-in">
+  <div class="section-number" data-i18n="s1-num">01 · ESG Framework</div>
+  <h2 class="section-title" data-i18n="s1-title">Environmental · Social · <strong>Governance</strong></h2>
+  <p class="section-desc" data-i18n="s1-desc">CBA is built around ESG principles from the ground up — recycled steel containers, local community employment, and transparent 4-partner governance. A natural fit for institutional ESG-mandated capital.</p>
+
+  <div class="esg-grid">
+    <div class="esg-pillar env">
+      <span class="esg-letter">E</span>
+      <span class="esg-tag" data-i18n="esg-e-tag">Environmental</span>
+      <h3 data-i18n="esg-e-title">Carbon-Smart Infrastructure</h3>
+      <ul class="esg-items">
+        <li data-i18n="esg-e-1">Recycled shipping containers — 60% lower carbon footprint vs. traditional construction</li>
+        <li data-i18n="esg-e-2">Coastal location with zero deforestation — existing terrain</li>
+        <li data-i18n="esg-e-3">Solar panel potential on container rooftops</li>
+        <li data-i18n="esg-e-4">Low-impact small-group tourism model (max 12 guests)</li>
+      </ul>
+      <div class="esg-score-bar"><div class="esg-score-fill"></div></div>
+      <div class="esg-score-label"><span data-i18n="esg-score">ESG Score</span><span>88 / 100</span></div>
+    </div>
+    <div class="esg-pillar soc">
+      <span class="esg-letter">S</span>
+      <span class="esg-tag" data-i18n="esg-s-tag">Social</span>
+      <h3 data-i18n="esg-s-title">Community-First Employment</h3>
+      <ul class="esg-items">
+        <li data-i18n="esg-s-1">12–15 direct local jobs created in Morón community</li>
+        <li data-i18n="esg-s-2">Local fishermen and artisans integrated as experience providers</li>
+        <li data-i18n="esg-s-3">Venezuelan coastal culture preservation and promotion</li>
+        <li data-i18n="esg-s-4">Local workforce training in hospitality and guiding</li>
+      </ul>
+      <div class="esg-score-bar"><div class="esg-score-fill"></div></div>
+      <div class="esg-score-label"><span data-i18n="esg-score">ESG Score</span><span>82 / 100</span></div>
+    </div>
+    <div class="esg-pillar gov">
+      <span class="esg-letter">G</span>
+      <span class="esg-tag" data-i18n="esg-g-tag">Governance</span>
+      <h3 data-i18n="esg-g-title">Transparent Partnership Model</h3>
+      <ul class="esg-items">
+        <li data-i18n="esg-g-1">4-founder structure with clearly defined roles and responsibilities</li>
+        <li data-i18n="esg-g-2">Quarterly financial reporting to investors</li>
+        <li data-i18n="esg-g-3">Documented investment model with projected returns</li>
+        <li data-i18n="esg-g-4">Full compliance with Venezuelan tourism and corporate regulations</li>
+      </ul>
+      <div class="esg-score-bar"><div class="esg-score-fill"></div></div>
+      <div class="esg-score-label"><span data-i18n="esg-score">ESG Score</span><span>75 / 100</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. FINANCIAL FLOW -->
+<section class="section fade-in">
+  <div class="section-number" data-i18n="s2-num">02 · Financial Flow</div>
+  <h2 class="section-title" data-i18n="s2-title">Investment <strong>→ Return</strong> Pathway</h2>
+  <p class="section-desc" data-i18n="s2-desc">Capital deployed in Phase 1 generates immediate operational cash flow within 6 months of launch, with full ROI achieved at the 24-month mark under conservative 60% occupancy assumptions.</p>
+
+  <div class="flow-container">
+    <div class="flow-node">
+      <span class="flow-node-icon">💰</span>
+      <span class="flow-node-value">$115K</span>
+      <span class="flow-node-label" data-i18n="flow-1">Initial Capital</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <span class="flow-node-icon">🏗️</span>
+      <span class="flow-node-value">6 mo.</span>
+      <span class="flow-node-label" data-i18n="flow-2">Build & Launch</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <span class="flow-node-icon">🏖️</span>
+      <span class="flow-node-value">$449K</span>
+      <span class="flow-node-label" data-i18n="flow-3">Annual Revenue</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <span class="flow-node-icon">📊</span>
+      <span class="flow-node-value">$247K</span>
+      <span class="flow-node-label" data-i18n="flow-4">EBITDA / Year</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node highlight">
+      <span class="flow-node-icon">🎯</span>
+      <span class="flow-node-value">$771K</span>
+      <span class="flow-node-label" data-i18n="flow-5">NPV at 5 Years</span>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-cell">
+      <span class="kpi-cell-value">38%</span>
+      <span class="kpi-cell-label">IRR<br>Internal Rate of Return</span>
+    </div>
+    <div class="kpi-cell">
+      <span class="kpi-cell-value gold">$771K</span>
+      <span class="kpi-cell-label">NPV<br>5-Year Net Present Value</span>
+    </div>
+    <div class="kpi-cell">
+      <span class="kpi-cell-value">55%</span>
+      <span class="kpi-cell-label">EBITDA<br>Operating Margin</span>
+    </div>
+    <div class="kpi-cell">
+      <span class="kpi-cell-value coral">24</span>
+      <span class="kpi-cell-label">MONTHS<br>Full ROI Payback</span>
+    </div>
+  </div>
+</section>
+
+<!-- 3. TAM/SAM/SOM -->
+<section class="section fade-in">
+  <div class="section-number" data-i18n="s3-num">03 · Market Sizing</div>
+  <h2 class="section-title" data-i18n="s3-title">TAM · SAM · <strong>SOM</strong></h2>
+  <p class="section-desc" data-i18n="s3-desc">CBA targets the fastest-growing segment of global travel — adventure tourism with a CAGR of 8% through 2035 — with a highly conservative 0.001% market penetration target in Year 1.</p>
+
+  <div class="tam-visual">
+    <div class="tam-circles">
+      <div class="tam-circle tam">
+        <span class="tam-circle-label">TAM</span>
+        <span class="tam-circle-value">$345.6B</span>
+      </div>
+      <div class="tam-circle sam">
+        <span class="tam-circle-label">SAM</span>
+        <span class="tam-circle-value">$6.36B</span>
+      </div>
+      <div class="tam-circle som">
+        <span class="tam-circle-label">SOM</span>
+        <span class="tam-circle-value">$449K</span>
+      </div>
+    </div>
+    <div class="tam-legend">
+      <div class="tam-legend-item">
+        <div class="tam-legend-dot"></div>
+        <div>
+          <div class="tam-legend-label">TAM</div>
+          <div class="tam-legend-value">$345.6B</div>
+          <div class="tam-legend-desc" data-i18n="tam-desc">Global adventure tourism market 2025. CAGR 8% → $745.7B by 2035</div>
+        </div>
+      </div>
+      <div class="tam-legend-item">
+        <div class="tam-legend-dot"></div>
+        <div>
+          <div class="tam-legend-label">SAM</div>
+          <div class="tam-legend-value">$6.36B</div>
+          <div class="tam-legend-desc" data-i18n="sam-desc">5.3M European travelers to Caribbean × $1,200 avg. spend per person/week</div>
+        </div>
+      </div>
+      <div class="tam-legend-item">
+        <div class="tam-legend-dot"></div>
+        <div>
+          <div class="tam-legend-label">SOM Year 1</div>
+          <div class="tam-legend-value">$449K</div>
+          <div class="tam-legend-desc" data-i18n="som-desc">Conservative 60% occupancy — 6 containers × $2,400/week × 8 months high season</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. IRR/NPV PROJECTION -->
+<section class="section fade-in">
+  <div class="section-number" data-i18n="s4-num">04 · Return Projection</div>
+  <h2 class="section-title" data-i18n="s4-title">5-Year <strong>IRR / NPV</strong> Curve</h2>
+  <p class="section-desc" data-i18n="s4-desc">Cumulative cash flow projection from initial investment through Year 5. Breakeven achieved at Month 6 post-launch. IRR of 38% significantly exceeds typical EM hospitality benchmarks of 18–22%.</p>
+
+  <div class="chart-area">
+    <div class="chart-title" data-i18n="chart-title">Cumulative Net Cash Flow (USD) — 5-Year Horizon</div>
+    <div class="chart-svg-wrap">
+      <svg class="irr-chart" viewBox="0 0 800 220" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="cashGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#00C9A7" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <line x1="0" y1="44" x2="800" y2="44" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="0" y1="88" x2="800" y2="88" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="0" y1="132" x2="800" y2="132" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <line x1="0" y1="176" x2="800" y2="176" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <!-- Zero line -->
+        <line x1="0" y1="132" x2="800" y2="132" stroke="rgba(255,100,90,0.3)" stroke-width="1" stroke-dasharray="4,4"/>
+        <!-- Cash flow curve: starts at -115K, breakeven Y1, positive growth -->
+        <path d="M 0,176 C 80,190 120,200 160,185 C 200,170 240,150 280,132 C 320,114 360,88 400,70 C 480,44 560,28 640,16 C 720,6 800,4 800,4"
+              fill="url(#cashGrad)" stroke="none"/>
+        <path d="M 0,176 C 80,190 120,200 160,185 C 200,170 240,150 280,132 C 320,114 360,88 400,70 C 480,44 560,28 640,16 C 720,6 800,4 800,4"
+              fill="none" stroke="#00C9A7" stroke-width="2.5"/>
+        <!-- Breakeven dot -->
+        <circle cx="280" cy="132" r="5" fill="#FF6B5A"/>
+        <text x="288" y="125" fill="#FF6B5A" font-family="JetBrains Mono" font-size="10">Breakeven</text>
+        <!-- Y5 dot -->
+        <circle cx="800" cy="4" r="5" fill="#D4A853"/>
+        <!-- Year labels -->
+        <text x="0" y="215" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="9">Y0</text>
+        <text x="155" y="215" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="9">Y1</text>
+        <text x="315" y="215" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="9">Y2</text>
+        <text x="475" y="215" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="9">Y3</text>
+        <text x="635" y="215" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="9">Y4</text>
+        <text x="775" y="215" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="9">Y5</text>
+        <!-- Value labels -->
+        <text x="4" y="178" fill="rgba(250,250,248,0.3)" font-family="JetBrains Mono" font-size="8">-$115K</text>
+        <text x="760" y="14" fill="#D4A853" font-family="JetBrains Mono" font-size="9">+$771K</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 5. RISK MATRIX -->
+<section class="section fade-in">
+  <div class="section-number" data-i18n="s5-num">05 · Risk Matrix</div>
+  <h2 class="section-title" data-i18n="s5-title">Risk Assessment & <strong>Mitigation</strong></h2>
+  <p class="section-desc" data-i18n="s5-desc">Identified risk factors with probability/impact assessment and pre-defined mitigation strategies. CBA's hybrid model (tourism + industrial workshop + digital platform) provides natural revenue diversification.</p>
+
+  <div class="risk-matrix">
+    <div class="risk-card high">
+      <span class="risk-level" data-i18n="risk-high">HIGH · Probability: Medium</span>
+      <h4 data-i18n="risk-1-title">Political & Regulatory Risk</h4>
+      <p data-i18n="risk-1-desc">Venezuela's political landscape may affect operations, permits, and foreign currency access.</p>
+      <div class="risk-mitigation"><strong data-i18n="mitigation">Mitigation:</strong> <span data-i18n="risk-1-mit">Structure investment through international holding. Revenue denominated in USD. Legal framework reviewed by local counsel.</span></div>
+    </div>
+    <div class="risk-card high">
+      <span class="risk-level" data-i18n="risk-high">HIGH · Probability: Low</span>
+      <h4 data-i18n="risk-2-title">Infrastructure & Logistics</h4>
+      <p data-i18n="risk-2-desc">Intermittent utilities, road conditions, and supply chain limitations in coastal Venezuela.</p>
+      <div class="risk-mitigation"><strong data-i18n="mitigation">Mitigation:</strong> <span data-i18n="risk-2-mit">On-site generator and water storage. Solar panel roadmap. Local supplier network pre-established.</span></div>
+    </div>
+    <div class="risk-card medium">
+      <span class="risk-level" data-i18n="risk-med">MEDIUM · Probability: Medium</span>
+      <h4 data-i18n="risk-3-title">Occupancy Below Projection</h4>
+      <p data-i18n="risk-3-desc">Tourism demand may fall below 60% occupancy assumption in early years.</p>
+      <div class="risk-mitigation"><strong data-i18n="mitigation">Mitigation:</strong> <span data-i18n="risk-3-mit">Revenue diversification: workshop income + Renace digital platform + fishing/cultural tours. Breakeven at only 40% occupancy.</span></div>
+    </div>
+    <div class="risk-card medium">
+      <span class="risk-level" data-i18n="risk-med">MEDIUM · Probability: Low</span>
+      <h4 data-i18n="risk-4-title">Currency & FX Exposure</h4>
+      <p data-i18n="risk-4-desc">Venezuelan bolivar volatility affecting local operating costs.</p>
+      <div class="risk-mitigation"><strong data-i18n="mitigation">Mitigation:</strong> <span data-i18n="risk-4-mit">All prices in USD. International payment rails via PayPal/crypto. Local costs represent only 45% of revenue.</span></div>
+    </div>
+    <div class="risk-card low">
+      <span class="risk-level" data-i18n="risk-low">LOW · Probability: Low</span>
+      <h4 data-i18n="risk-5-title">Natural Events</h4>
+      <p data-i18n="risk-5-desc">Hurricane season or coastal weather events affecting operations.</p>
+      <div class="risk-mitigation"><strong data-i18n="mitigation">Mitigation:</strong> <span data-i18n="risk-5-mit">Container structure is hurricane-resistant by design. Insurance coverage included in operational budget. Seasonal pricing model.</span></div>
+    </div>
+    <div class="risk-card low">
+      <span class="risk-level" data-i18n="risk-low">LOW · Probability: Low</span>
+      <h4 data-i18n="risk-6-title">Partnership Dissolution</h4>
+      <p data-i18n="risk-6-desc">Disagreement among 4 founding partners affecting operations.</p>
+      <div class="risk-mitigation"><strong data-i18n="mitigation">Mitigation:</strong> <span data-i18n="risk-6-mit">Formal shareholders agreement in place. Defined exit and buyout clauses. Investor board seat as governance oversight.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">CBA</div>
+  <div class="footer-info">
+    Container Beach Adventures · Morón, Carabobo, Venezuela<br>
+    venbraproyeccion@gmail.com · github.com/venbraproyeccion-code1/cba-website<br>
+    <span data-i18n="footer-conf">Confidential · For Qualified Investors Only · April 2026</span>
+  </div>
+</footer>
+
+<script>
+const translations = {
+  en: {
+    'cover-eyebrow': 'Institutional Investment Deck · April 2026',
+    'cover-sub': 'Receptive Tourism Platform · Morón, Carabobo, Venezuela',
+    'meta-req': 'Capital Required', 'meta-irr': 'Projected IRR', 'meta-npv': 'NPV 5Y', 'meta-payback': 'Payback',
+    'cover-scroll': 'Scroll',
+    's1-num': '01 · ESG Framework', 's1-title': 'Environmental · Social · <strong>Governance</strong>',
+    's1-desc': 'CBA is built around ESG principles from the ground up — recycled steel containers, local community employment, and transparent 4-partner governance.',
+    'esg-e-tag': 'Environmental', 'esg-e-title': 'Carbon-Smart Infrastructure',
+    'esg-e-1': 'Recycled shipping containers — 60% lower carbon footprint vs. traditional construction',
+    'esg-e-2': 'Coastal location with zero deforestation — existing terrain',
+    'esg-e-3': 'Solar panel potential on container rooftops',
+    'esg-e-4': 'Low-impact small-group tourism model (max 12 guests)',
+    'esg-s-tag': 'Social', 'esg-s-title': 'Community-First Employment',
+    'esg-s-1': '12–15 direct local jobs created in Morón community',
+    'esg-s-2': 'Local fishermen and artisans integrated as experience providers',
+    'esg-s-3': 'Venezuelan coastal culture preservation and promotion',
+    'esg-s-4': 'Local workforce training in hospitality and guiding',
+    'esg-g-tag': 'Governance', 'esg-g-title': 'Transparent Partnership Model',
+    'esg-g-1': '4-founder structure with clearly defined roles and responsibilities',
+    'esg-g-2': 'Quarterly financial reporting to investors',
+    'esg-g-3': 'Documented investment model with projected returns',
+    'esg-g-4': 'Full compliance with Venezuelan tourism and corporate regulations',
+    'esg-score': 'ESG Score',
+    's2-num': '02 · Financial Flow', 's2-title': 'Investment <strong>→ Return</strong> Pathway',
+    's2-desc': 'Capital deployed in Phase 1 generates immediate operational cash flow within 6 months of launch, with full ROI achieved at the 24-month mark under conservative 60% occupancy assumptions.',
+    'flow-1': 'Initial Capital', 'flow-2': 'Build & Launch', 'flow-3': 'Annual Revenue', 'flow-4': 'EBITDA / Year', 'flow-5': 'NPV at 5 Years',
+    's3-num': '03 · Market Sizing', 's3-title': 'TAM · SAM · <strong>SOM</strong>',
+    's3-desc': 'CBA targets the fastest-growing segment of global travel — adventure tourism with a CAGR of 8% through 2035.',
+    'tam-desc': 'Global adventure tourism market 2025. CAGR 8% → $745.7B by 2035',
+    'sam-desc': '5.3M European travelers to Caribbean × $1,200 avg. spend per person/week',
+    'som-desc': 'Conservative 60% occupancy — 6 containers × $2,400/week × 8 months high season',
+    's4-num': '04 · Return Projection', 's4-title': '5-Year <strong>IRR / NPV</strong> Curve',
+    's4-desc': 'Cumulative cash flow projection from initial investment through Year 5. Breakeven achieved at Month 6 post-launch.',
+    'chart-title': 'Cumulative Net Cash Flow (USD) — 5-Year Horizon',
+    's5-num': '05 · Risk Matrix', 's5-title': 'Risk Assessment & <strong>Mitigation</strong>',
+    's5-desc': 'Identified risk factors with probability/impact assessment and pre-defined mitigation strategies.',
+    'risk-high': 'HIGH · Probability: Medium', 'risk-med': 'MEDIUM · Probability: Medium', 'risk-low': 'LOW · Probability: Low',
+    'risk-1-title': 'Political & Regulatory Risk', 'risk-1-desc': "Venezuela's political landscape may affect operations, permits, and foreign currency access.", 'risk-1-mit': 'Structure investment through international holding. Revenue denominated in USD.',
+    'risk-2-title': 'Infrastructure & Logistics', 'risk-2-desc': 'Intermittent utilities, road conditions, and supply chain limitations.', 'risk-2-mit': 'On-site generator and water storage. Solar panel roadmap.',
+    'risk-3-title': 'Occupancy Below Projection', 'risk-3-desc': 'Tourism demand may fall below 60% occupancy assumption in early years.', 'risk-3-mit': 'Revenue diversification: workshop + Renace digital platform. Breakeven at 40%.',
+    'risk-4-title': 'Currency & FX Exposure', 'risk-4-desc': 'Venezuelan bolivar volatility affecting local operating costs.', 'risk-4-mit': 'All prices in USD. International payment rails via PayPal/crypto.',
+    'risk-5-title': 'Natural Events', 'risk-5-desc': 'Hurricane season or coastal weather events affecting operations.', 'risk-5-mit': 'Container structure is hurricane-resistant. Insurance coverage included.',
+    'risk-6-title': 'Partnership Dissolution', 'risk-6-desc': 'Disagreement among 4 founding partners affecting operations.', 'risk-6-mit': 'Formal shareholders agreement. Defined exit clauses. Investor board seat.',
+    'mitigation': 'Mitigation:',
+    'footer-conf': 'Confidential · For Qualified Investors Only · April 2026',
+    'lbl-lang': 'Language:'
+  },
+  es: {
+    'cover-eyebrow': 'Presentación para Inversores Institucionales · Abril 2026',
+    'cover-sub': 'Plataforma de Turismo Receptivo · Morón, Carabobo, Venezuela',
+    'meta-req': 'Capital Requerido', 'meta-irr': 'IRR Proyectado', 'meta-npv': 'VPN 5 Años', 'meta-payback': 'Retorno',
+    'cover-scroll': 'Desplazar',
+    's1-num': '01 · Marco ESG', 's1-title': 'Ambiental · Social · <strong>Gobernanza</strong>',
+    's1-desc': 'CBA se construye sobre principios ESG desde su base — contenedores de acero reciclados, empleo local y gobernanza transparente con 4 socios.',
+    'esg-e-tag': 'Ambiental', 'esg-e-title': 'Infraestructura Baja en Carbono',
+    'esg-e-1': 'Contenedores reciclados — 60% menos huella de carbono vs. construcción tradicional',
+    'esg-e-2': 'Ubicación costera sin deforestación — terreno existente',
+    'esg-e-3': 'Potencial para paneles solares en techos de contenedores',
+    'esg-e-4': 'Modelo de turismo de bajo impacto en grupos pequeños (máx. 12 huéspedes)',
+    'esg-s-tag': 'Social', 'esg-s-title': 'Empleo Comunitario Prioritario',
+    'esg-s-1': '12–15 empleos directos locales creados en la comunidad de Morón',
+    'esg-s-2': 'Pescadores y artesanos locales integrados como proveedores de experiencias',
+    'esg-s-3': 'Preservación y promoción de la cultura costera venezolana',
+    'esg-s-4': 'Capacitación local en hospitalidad y guía turístico',
+    'esg-g-tag': 'Gobernanza', 'esg-g-title': 'Modelo de Asociación Transparente',
+    'esg-g-1': 'Estructura de 4 fundadores con roles y responsabilidades claramente definidos',
+    'esg-g-2': 'Reportes financieros trimestrales a inversores',
+    'esg-g-3': 'Modelo de inversión documentado con retornos proyectados',
+    'esg-g-4': 'Cumplimiento total con regulaciones venezolanas de turismo y empresas',
+    'esg-score': 'Puntuación ESG',
+    's2-num': '02 · Flujo Financiero', 's2-title': 'Inversión <strong>→ Retorno</strong>',
+    's2-desc': 'El capital desplegado en la Fase 1 genera flujo de caja operativo inmediato dentro de los 6 meses del lanzamiento, con ROI completo a los 24 meses con ocupación conservadora del 60%.',
+    'flow-1': 'Capital Inicial', 'flow-2': 'Construcción', 'flow-3': 'Ingresos Anuales', 'flow-4': 'EBITDA / Año', 'flow-5': 'VPN a 5 Años',
+    's3-num': '03 · Tamaño de Mercado', 's3-title': 'TAM · SAM · <strong>SOM</strong>',
+    's3-desc': 'CBA apunta al segmento de mayor crecimiento del turismo global — aventura con CAGR del 8% hasta 2035.',
+    'tam-desc': 'Mercado global de turismo de aventura 2025. CAGR 8% → $745.7B para 2035',
+    'sam-desc': '5.3M turistas europeos al Caribe × $1,200 gasto promedio por persona/semana',
+    'som-desc': 'Ocupación conservadora 60% — 6 contenedores × $2,400/semana × 8 meses temporada alta',
+    's4-num': '04 · Proyección de Retorno', 's4-title': 'Curva <strong>IRR / VPN</strong> a 5 Años',
+    's4-desc': 'Proyección de flujo de caja acumulado desde la inversión inicial hasta el Año 5. Punto de equilibrio en el Mes 6 post-lanzamiento.',
+    'chart-title': 'Flujo de Caja Neto Acumulado (USD) — Horizonte 5 Años',
+    's5-num': '05 · Matriz de Riesgos', 's5-title': 'Evaluación de Riesgos y <strong>Mitigación</strong>',
+    's5-desc': 'Factores de riesgo identificados con evaluación de probabilidad/impacto y estrategias de mitigación predefinidas.',
+    'risk-high': 'ALTO · Probabilidad: Media', 'risk-med': 'MEDIO · Probabilidad: Media', 'risk-low': 'BAJO · Probabilidad: Baja',
+    'risk-1-title': 'Riesgo Político y Regulatorio', 'risk-1-desc': 'El panorama político de Venezuela puede afectar operaciones, permisos y acceso a divisas.', 'risk-1-mit': 'Estructurar inversión a través de holding internacional. Ingresos denominados en USD.',
+    'risk-2-title': 'Infraestructura y Logística', 'risk-2-desc': 'Servicios intermitentes, condiciones viales y limitaciones de cadena de suministro.', 'risk-2-mit': 'Generador y almacenamiento de agua en sitio. Plan de paneles solares.',
+    'risk-3-title': 'Ocupación por Debajo de Proyección', 'risk-3-desc': 'La demanda turística puede caer por debajo del 60% de ocupación en años iniciales.', 'risk-3-mit': 'Diversificación: taller + plataforma digital Renace. Punto de equilibrio al 40%.',
+    'risk-4-title': 'Exposición Cambiaria', 'risk-4-desc': 'Volatilidad del bolívar venezolano afectando costos operativos locales.', 'risk-4-mit': 'Todos los precios en USD. Pagos internacionales vía PayPal/cripto.',
+    'risk-5-title': 'Eventos Naturales', 'risk-5-desc': 'Temporada de huracanes o eventos climáticos costeros afectando operaciones.', 'risk-5-mit': 'Estructura de contenedor resistente a huracanes. Seguro incluido en presupuesto.',
+    'risk-6-title': 'Disolución de Sociedad', 'risk-6-desc': 'Desacuerdo entre los 4 socios fundadores que afecte las operaciones.', 'risk-6-mit': 'Acuerdo formal de accionistas. Cláusulas de salida definidas. Asiento en junta.',
+    'mitigation': 'Mitigación:',
+    'footer-conf': 'Confidencial · Solo para Inversores Calificados · Abril 2026',
+    'lbl-lang': 'Idioma:'
+  },
+  pt: {
+    'cover-eyebrow': 'Apresentação para Investidores Institucionais · Abril 2026',
+    'cover-sub': 'Plataforma de Turismo Receptivo · Morón, Carabobo, Venezuela',
+    'meta-req': 'Capital Necessário', 'meta-irr': 'TIR Projetada', 'meta-npv': 'VPL 5 Anos', 'meta-payback': 'Retorno',
+    'cover-scroll': 'Rolar',
+    's1-num': '01 · Estrutura ESG', 's1-title': 'Ambiental · Social · <strong>Governança</strong>',
+    's1-desc': 'CBA é construída sobre princípios ESG desde a base — contêineres de aço reciclados, emprego local e governança transparente com 4 sócios.',
+    'esg-e-tag': 'Ambiental', 'esg-e-title': 'Infraestrutura de Baixo Carbono',
+    'esg-e-1': 'Contêineres reciclados — 60% menos pegada de carbono vs. construção tradicional',
+    'esg-e-2': 'Localização costeira sem desmatamento — terreno existente',
+    'esg-e-3': 'Potencial para painéis solares nos telhados dos contêineres',
+    'esg-e-4': 'Modelo de turismo de baixo impacto em pequenos grupos (máx. 12 hóspedes)',
+    'esg-s-tag': 'Social', 'esg-s-title': 'Emprego Comunitário Prioritário',
+    'esg-s-1': '12–15 empregos diretos locais criados na comunidade de Morón',
+    'esg-s-2': 'Pescadores e artesãos locais integrados como fornecedores de experiências',
+    'esg-s-3': 'Preservação e promoção da cultura costeira venezuelana',
+    'esg-s-4': 'Treinamento local em hospitalidade e guia turístico',
+    'esg-g-tag': 'Governança', 'esg-g-title': 'Modelo de Parceria Transparente',
+    'esg-g-1': 'Estrutura de 4 fundadores com papéis e responsabilidades claramente definidos',
+    'esg-g-2': 'Relatórios financeiros trimestrais aos investidores',
+    'esg-g-3': 'Modelo de investimento documentado com retornos projetados',
+    'esg-g-4': 'Conformidade total com regulamentações venezuelanas de turismo e empresas',
+    'esg-score': 'Pontuação ESG',
+    's2-num': '02 · Fluxo Financeiro', 's2-title': 'Investimento <strong>→ Retorno</strong>',
+    's2-desc': 'O capital implantado na Fase 1 gera fluxo de caixa operacional imediato dentro de 6 meses do lançamento, com ROI completo em 24 meses com ocupação conservadora de 60%.',
+    'flow-1': 'Capital Inicial', 'flow-2': 'Construção', 'flow-3': 'Receita Anual', 'flow-4': 'EBITDA / Ano', 'flow-5': 'VPL em 5 Anos',
+    's3-num': '03 · Dimensionamento de Mercado', 's3-title': 'TAM · SAM · <strong>SOM</strong>',
+    's3-desc': 'CBA mira o segmento de maior crescimento do turismo global — aventura com CAGR de 8% até 2035.',
+    'tam-desc': 'Mercado global de turismo de aventura 2025. CAGR 8% → $745.7B até 2035',
+    'sam-desc': '5.3M turistas europeus para o Caribe × $1.200 gasto médio por pessoa/semana',
+    'som-desc': 'Ocupação conservadora 60% — 6 contêineres × $2.400/semana × 8 meses alta temporada',
+    's4-num': '04 · Projeção de Retorno', 's4-title': 'Curva <strong>TIR / VPL</strong> em 5 Anos',
+    's4-desc': 'Projeção de fluxo de caixa acumulado do investimento inicial até o Ano 5. Ponto de equilíbrio no Mês 6 pós-lançamento.',
+    'chart-title': 'Fluxo de Caixa Líquido Acumulado (USD) — Horizonte 5 Anos',
+    's5-num': '05 · Matriz de Riscos', 's5-title': 'Avaliação de Riscos e <strong>Mitigação</strong>',
+    's5-desc': 'Fatores de risco identificados com avaliação de probabilidade/impacto e estratégias de mitigação predefinidas.',
+    'risk-high': 'ALTO · Probabilidade: Média', 'risk-med': 'MÉDIO · Probabilidade: Média', 'risk-low': 'BAIXO · Probabilidade: Baixa',
+    'risk-1-title': 'Risco Político e Regulatório', 'risk-1-desc': 'O panorama político da Venezuela pode afetar operações, licenças e acesso a divisas.', 'risk-1-mit': 'Estruturar investimento via holding internacional. Receitas em USD.',
+    'risk-2-title': 'Infraestrutura e Logística', 'risk-2-desc': 'Serviços intermitentes, condições viárias e limitações da cadeia de fornecimento.', 'risk-2-mit': 'Gerador e armazenamento de água no local. Plano de painéis solares.',
+    'risk-3-title': 'Ocupação Abaixo da Projeção', 'risk-3-desc': 'A demanda turística pode ficar abaixo de 60% de ocupação nos primeiros anos.', 'risk-3-mit': 'Diversificação: oficina + plataforma digital Renace. Equilíbrio a 40%.',
+    'risk-4-title': 'Exposição Cambial', 'risk-4-desc': 'Volatilidade do bolívar venezuelano afetando custos operacionais locais.', 'risk-4-mit': 'Todos os preços em USD. Pagamentos internacionais via PayPal/cripto.',
+    'risk-5-title': 'Eventos Naturais', 'risk-5-desc': 'Temporada de furacões ou eventos climáticos costeiros afetando operações.', 'risk-5-mit': 'Estrutura de contêiner resistente a furacões. Seguro incluído no orçamento.',
+    'risk-6-title': 'Dissolução de Sociedade', 'risk-6-desc': 'Desacordo entre os 4 sócios fundadores afetando as operações.', 'risk-6-mit': 'Acordo formal de acionistas. Cláusulas de saída definidas. Assento no conselho.',
+    'mitigation': 'Mitigação:',
+    'footer-conf': 'Confidencial · Somente para Investidores Qualificados · Abril 2026',
+    'lbl-lang': 'Idioma:'
+  },
+  fr: {
+    'cover-eyebrow': 'Présentation aux Investisseurs Institutionnels · Avril 2026',
+    'cover-sub': 'Plateforme de Tourisme Réceptif · Morón, Carabobo, Venezuela',
+    'meta-req': 'Capital Requis', 'meta-irr': 'TRI Projeté', 'meta-npv': 'VAN 5 Ans', 'meta-payback': 'Retour',
+    'cover-scroll': 'Défiler',
+    's1-num': '01 · Cadre ESG', 's1-title': 'Environnemental · Social · <strong>Gouvernance</strong>',
+    's1-desc': 'CBA est construite sur des principes ESG dès le départ — conteneurs en acier recyclé, emploi local et gouvernance transparente à 4 partenaires.',
+    'esg-e-tag': 'Environnemental', 'esg-e-title': 'Infrastructure Bas Carbone',
+    'esg-e-1': 'Conteneurs recyclés — 60% moins d\'empreinte carbone vs. construction traditionnelle',
+    'esg-e-2': 'Emplacement côtier sans déforestation — terrain existant',
+    'esg-e-3': 'Potentiel de panneaux solaires sur les toits des conteneurs',
+    'esg-e-4': 'Modèle touristique à faible impact en petits groupes (max. 12 hôtes)',
+    'esg-s-tag': 'Social', 'esg-s-title': 'Emploi Communautaire Prioritaire',
+    'esg-s-1': '12–15 emplois directs locaux créés dans la communauté de Morón',
+    'esg-s-2': 'Pêcheurs et artisans locaux intégrés comme fournisseurs d\'expériences',
+    'esg-s-3': 'Préservation et promotion de la culture côtière vénézuélienne',
+    'esg-s-4': 'Formation locale en hôtellerie et guidage touristique',
+    'esg-g-tag': 'Gouvernance', 'esg-g-title': 'Modèle de Partenariat Transparent',
+    'esg-g-1': 'Structure à 4 fondateurs avec rôles et responsabilités clairement définis',
+    'esg-g-2': 'Rapports financiers trimestriels aux investisseurs',
+    'esg-g-3': 'Modèle d\'investissement documenté avec rendements projetés',
+    'esg-g-4': 'Conformité totale avec les réglementations vénézuéliennes du tourisme',
+    'esg-score': 'Score ESG',
+    's2-num': '02 · Flux Financier', 's2-title': 'Investissement <strong>→ Retour</strong>',
+    's2-desc': 'Le capital déployé en Phase 1 génère un flux de trésorerie opérationnel immédiat dans les 6 mois du lancement, avec un ROI complet à 24 mois.',
+    'flow-1': 'Capital Initial', 'flow-2': 'Construction', 'flow-3': 'Revenus Annuels', 'flow-4': 'EBITDA / An', 'flow-5': 'VAN à 5 Ans',
+    's3-num': '03 · Taille du Marché', 's3-title': 'TAM · SAM · <strong>SOM</strong>',
+    's3-desc': 'CBA cible le segment à la croissance la plus rapide du tourisme mondial — aventure avec CAGR de 8% jusqu\'en 2035.',
+    'tam-desc': 'Marché mondial du tourisme d\'aventure 2025. CAGR 8% → $745.7B d\'ici 2035',
+    'sam-desc': '5.3M touristes européens aux Caraïbes × $1.200 dépense moyenne par personne/semaine',
+    'som-desc': 'Occupation conservatrice 60% — 6 conteneurs × $2.400/semaine × 8 mois haute saison',
+    's4-num': '04 · Projection de Retour', 's4-title': 'Courbe <strong>TRI / VAN</strong> sur 5 Ans',
+    's4-desc': 'Projection des flux de trésorerie cumulés de l\'investissement initial à l\'An 5. Seuil de rentabilité au Mois 6 post-lancement.',
+    'chart-title': 'Flux de Trésorerie Net Cumulé (USD) — Horizon 5 Ans',
+    's5-num': '05 · Matrice des Risques', 's5-title': 'Évaluation des Risques et <strong>Atténuation</strong>',
+    's5-desc': 'Facteurs de risque identifiés avec évaluation probabilité/impact et stratégies d\'atténuation prédéfinies.',
+    'risk-high': 'ÉLEVÉ · Probabilité: Moyenne', 'risk-med': 'MOYEN · Probabilité: Moyenne', 'risk-low': 'FAIBLE · Probabilité: Faible',
+    'risk-1-title': 'Risque Politique et Réglementaire', 'risk-1-desc': 'Le paysage politique vénézuélien peut affecter les opérations, permis et accès aux devises.', 'risk-1-mit': 'Structurer l\'investissement via holding international. Revenus en USD.',
+    'risk-2-title': 'Infrastructure et Logistique', 'risk-2-desc': 'Services intermittents, conditions routières et limitations de chaîne d\'approvisionnement.', 'risk-2-mit': 'Générateur et stockage d\'eau sur site. Plan de panneaux solaires.',
+    'risk-3-title': 'Occupation en Dessous des Prévisions', 'risk-3-desc': 'La demande touristique peut tomber en dessous de 60% d\'occupation dans les premières années.', 'risk-3-mit': 'Diversification: atelier + plateforme numérique Renace. Équilibre à 40%.',
+    'risk-4-title': 'Exposition aux Changes', 'risk-4-desc': 'Volatilité du bolivar vénézuélien affectant les coûts opérationnels locaux.', 'risk-4-mit': 'Tous les prix en USD. Paiements internationaux via PayPal/crypto.',
+    'risk-5-title': 'Événements Naturels', 'risk-5-desc': 'Saison des ouragans ou événements climatiques côtiers affectant les opérations.', 'risk-5-mit': 'Structure de conteneur résistante aux ouragans. Assurance incluse dans le budget.',
+    'risk-6-title': 'Dissolution de Partenariat', 'risk-6-desc': 'Désaccord entre les 4 fondateurs affectant les opérations.', 'risk-6-mit': 'Accord formel d\'actionnaires. Clauses de sortie définies. Siège au conseil.',
+    'mitigation': 'Atténuation:',
+    'footer-conf': 'Confidentiel · Réservé aux Investisseurs Qualifiés · Avril 2026',
+    'lbl-lang': 'Langue:'
+  },
+  de: {
+    'cover-eyebrow': 'Institutionelle Investorenpräsentation · April 2026',
+    'cover-sub': 'Rezeptive Tourismus-Plattform · Morón, Carabobo, Venezuela',
+    'meta-req': 'Kapital benötigt', 'meta-irr': 'Projizierter IRR', 'meta-npv': 'NPV 5 Jahre', 'meta-payback': 'Rückfluss',
+    'cover-scroll': 'Scrollen',
+    's1-num': '01 · ESG-Rahmen', 's1-title': 'Umwelt · Soziales · <strong>Governance</strong>',
+    's1-desc': 'CBA ist von Grund auf nach ESG-Prinzipien aufgebaut — recycelte Stahlcontainer, lokale Beschäftigung und transparente 4-Partner-Governance.',
+    'esg-e-tag': 'Umwelt', 'esg-e-title': 'Kohlenstoffarme Infrastruktur',
+    'esg-e-1': 'Recycelte Container — 60% geringerer CO₂-Fußabdruck vs. traditionellem Bau',
+    'esg-e-2': 'Küstenstandort ohne Abholzung — vorhandenes Gelände',
+    'esg-e-3': 'Solarpaneel-Potenzial auf Containerdächern',
+    'esg-e-4': 'Umweltschonendes Kleingruppen-Tourismusmodell (max. 12 Gäste)',
+    'esg-s-tag': 'Soziales', 'esg-s-title': 'Gemeinschaftsorientierte Beschäftigung',
+    'esg-s-1': '12–15 direkte lokale Arbeitsplätze in der Gemeinde Morón',
+    'esg-s-2': 'Lokale Fischer und Handwerker als Erlebnisanbieter integriert',
+    'esg-s-3': 'Erhaltung und Förderung der venezolanischen Küstenkultur',
+    'esg-s-4': 'Lokale Ausbildung in Gastgewerbe und Reiseführung',
+    'esg-g-tag': 'Governance', 'esg-g-title': 'Transparentes Partnerschaftsmodell',
+    'esg-g-1': '4-Gründer-Struktur mit klar definierten Rollen und Verantwortlichkeiten',
+    'esg-g-2': 'Vierteljährliche Finanzberichte an Investoren',
+    'esg-g-3': 'Dokumentiertes Investitionsmodell mit projizierten Renditen',
+    'esg-g-4': 'Vollständige Einhaltung venezolanischer Tourismus- und Unternehmensvorschriften',
+    'esg-score': 'ESG-Bewertung',
+    's2-num': '02 · Finanzfluss', 's2-title': 'Investition <strong>→ Rendite</strong>',
+    's2-desc': 'Das in Phase 1 eingesetzte Kapital generiert innerhalb von 6 Monaten nach dem Start sofortigen operativen Cashflow, mit vollständigem ROI nach 24 Monaten bei konservativer 60% Auslastung.',
+    'flow-1': 'Anfangskapital', 'flow-2': 'Bau & Start', 'flow-3': 'Jahreseinnahmen', 'flow-4': 'EBITDA / Jahr', 'flow-5': 'NPV nach 5 Jahren',
+    's3-num': '03 · Marktgröße', 's3-title': 'TAM · SAM · <strong>SOM</strong>',
+    's3-desc': 'CBA zielt auf das am schnellsten wachsende Segment des globalen Reisemarkts — Abenteuertourismus mit einem CAGR von 8% bis 2035.',
+    'tam-desc': 'Globaler Abenteuertourismusmarkt 2025. CAGR 8% → $745.7B bis 2035',
+    'sam-desc': '5,3M europäische Reisende in die Karibik × $1.200 Durchschnittsausgaben pro Person/Woche',
+    'som-desc': 'Konservative 60% Auslastung — 6 Container × $2.400/Woche × 8 Monate Hochsaison',
+    's4-num': '04 · Renditenprognose', 's4-title': '5-Jahres <strong>IRR / NPV</strong> Kurve',
+    's4-desc': 'Kumulierte Cashflow-Prognose vom Anfangsinvestition bis Jahr 5. Breakeven im Monat 6 nach dem Start.',
+    'chart-title': 'Kumulierter Netto-Cashflow (USD) — 5-Jahres-Horizont',
+    's5-num': '05 · Risikomatrix', 's5-title': 'Risikobewertung & <strong>Minderung</strong>',
+    's5-desc': 'Identifizierte Risikofaktoren mit Wahrscheinlichkeits-/Wirkungsbewertung und vordefinierten Minderungsstrategien.',
+    'risk-high': 'HOCH · Wahrscheinlichkeit: Mittel', 'risk-med': 'MITTEL · Wahrscheinlichkeit: Mittel', 'risk-low': 'NIEDRIG · Wahrscheinlichkeit: Gering',
+    'risk-1-title': 'Politisches & regulatorisches Risiko', 'risk-1-desc': 'Die politische Lage Venezuelas kann Betrieb, Genehmigungen und Devisenzugang beeinflussen.', 'risk-1-mit': 'Investition über internationale Holding strukturieren. Einnahmen in USD.',
+    'risk-2-title': 'Infrastruktur & Logistik', 'risk-2-desc': 'Unterbrochene Versorgung, Straßenbedingungen und Lieferketteneinschränkungen.', 'risk-2-mit': 'Generator und Wasserspeicher vor Ort. Solar-Fahrplan.',
+    'risk-3-title': 'Auslastung unter Prognose', 'risk-3-desc': 'Die Tourismusnachfrage könnte in den ersten Jahren unter 60% fallen.', 'risk-3-mit': 'Diversifizierung: Werkstatt + digitale Renace-Plattform. Breakeven bei 40%.',
+    'risk-4-title': 'Währungsrisiko', 'risk-4-desc': 'Volatilität des venezolanischen Bolívars beeinflusst lokale Betriebskosten.', 'risk-4-mit': 'Alle Preise in USD. Internationale Zahlungen über PayPal/Krypto.',
+    'risk-5-title': 'Naturereignisse', 'risk-5-desc': 'Hurrikansaison oder Küstenwetterereignisse beeinflussen den Betrieb.', 'risk-5-mit': 'Containerstruktur ist hurrikanresistent. Versicherung im Budget enthalten.',
+    'risk-6-title': 'Partnerschaftsauflösung', 'risk-6-desc': 'Meinungsverschiedenheiten unter den 4 Gründern beeinflussen den Betrieb.', 'risk-6-mit': 'Formeller Aktionärsvertrag. Definierte Ausstiegsklauseln. Investorensitz im Vorstand.',
+    'mitigation': 'Minderung:',
+    'footer-conf': 'Vertraulich · Nur für qualifizierte Investoren · April 2026',
+    'lbl-lang': 'Sprache:'
+  },
+  it: {
+    'cover-eyebrow': 'Presentazione per Investitori Istituzionali · Aprile 2026',
+    'cover-sub': 'Piattaforma di Turismo Ricettivo · Morón, Carabobo, Venezuela',
+    'meta-req': 'Capitale Richiesto', 'meta-irr': 'TIR Proiettato', 'meta-npv': 'VAN 5 Anni', 'meta-payback': 'Ritorno',
+    'cover-scroll': 'Scorrere',
+    's1-num': '01 · Quadro ESG', 's1-title': 'Ambientale · Sociale · <strong>Governance</strong>',
+    's1-desc': 'CBA è costruita su principi ESG dalle fondamenta — container in acciaio riciclato, occupazione locale e governance trasparente con 4 partner.',
+    'esg-e-tag': 'Ambientale', 'esg-e-title': 'Infrastruttura a Basse Emissioni',
+    'esg-e-1': 'Container riciclati — 60% minore impronta carbonica vs. costruzione tradizionale',
+    'esg-e-2': 'Posizione costiera senza deforestazione — terreno esistente',
+    'esg-e-3': 'Potenziale per pannelli solari sui tetti dei container',
+    'esg-e-4': 'Modello turistico a basso impatto in piccoli gruppi (max. 12 ospiti)',
+    'esg-s-tag': 'Sociale', 'esg-s-title': 'Occupazione Comunitaria Prioritaria',
+    'esg-s-1': '12–15 posti di lavoro diretti locali creati nella comunità di Morón',
+    'esg-s-2': 'Pescatori e artigiani locali integrati come fornitori di esperienze',
+    'esg-s-3': 'Preservazione e promozione della cultura costiera venezuelana',
+    'esg-s-4': 'Formazione locale in ospitalità e guida turistica',
+    'esg-g-tag': 'Governance', 'esg-g-title': 'Modello di Partnership Trasparente',
+    'esg-g-1': 'Struttura a 4 fondatori con ruoli e responsabilità chiaramente definiti',
+    'esg-g-2': 'Rapporti finanziari trimestrali agli investitori',
+    'esg-g-3': 'Modello di investimento documentato con rendimenti proiettati',
+    'esg-g-4': 'Piena conformità alle normative venezuelane sul turismo e sulle imprese',
+    'esg-score': 'Punteggio ESG',
+    's2-num': '02 · Flusso Finanziario', 's2-title': 'Investimento <strong>→ Ritorno</strong>',
+    's2-desc': 'Il capitale distribuito nella Fase 1 genera un flusso di cassa operativo immediato entro 6 mesi dal lancio, con ROI completo a 24 mesi con occupazione conservativa del 60%.',
+    'flow-1': 'Capitale Iniziale', 'flow-2': 'Costruzione', 'flow-3': 'Entrate Annuali', 'flow-4': 'EBITDA / Anno', 'flow-5': 'VAN a 5 Anni',
+    's3-num': '03 · Dimensione del Mercato', 's3-title': 'TAM · SAM · <strong>SOM</strong>',
+    's3-desc': 'CBA punta al segmento in più rapida crescita del turismo globale — avventura con CAGR dell\'8% fino al 2035.',
+    'tam-desc': 'Mercato globale del turismo avventura 2025. CAGR 8% → $745.7B entro il 2035',
+    'sam-desc': '5,3M turisti europei ai Caraibi × $1.200 spesa media per persona/settimana',
+    'som-desc': 'Occupazione conservativa 60% — 6 container × $2.400/settimana × 8 mesi alta stagione',
+    's4-num': '04 · Proiezione del Ritorno', 's4-title': 'Curva <strong>TIR / VAN</strong> a 5 Anni',
+    's4-desc': 'Proiezione del flusso di cassa cumulato dall\'investimento iniziale all\'Anno 5. Pareggio al Mese 6 post-lancio.',
+    'chart-title': 'Flusso di Cassa Netto Cumulato (USD) — Orizzonte 5 Anni',
+    's5-num': '05 · Matrice dei Rischi', 's5-title': 'Valutazione dei Rischi e <strong>Mitigazione</strong>',
+    's5-desc': 'Fattori di rischio identificati con valutazione probabilità/impatto e strategie di mitigazione predefinite.',
+    'risk-high': 'ALTO · Probabilità: Media', 'risk-med': 'MEDIO · Probabilità: Media', 'risk-low': 'BASSO · Probabilità: Bassa',
+    'risk-1-title': 'Rischio Politico e Normativo', 'risk-1-desc': 'Il panorama politico venezuelano può influenzare operazioni, permessi e accesso alle valute.', 'risk-1-mit': 'Strutturare l\'investimento tramite holding internazionale. Entrate in USD.',
+    'risk-2-title': 'Infrastruttura e Logistica', 'risk-2-desc': 'Servizi intermittenti, condizioni stradali e limitazioni della catena di fornitura.', 'risk-2-mit': 'Generatore e stoccaggio acqua in loco. Piano per pannelli solari.',
+    'risk-3-title': 'Occupazione Sotto le Previsioni', 'risk-3-desc': 'La domanda turistica potrebbe scendere sotto il 60% di occupazione nei primi anni.', 'risk-3-mit': 'Diversificazione: officina + piattaforma digitale Renace. Pareggio al 40%.',
+    'risk-4-title': 'Esposizione Valutaria', 'risk-4-desc': 'Volatilità del bolivar venezuelano che influenza i costi operativi locali.', 'risk-4-mit': 'Tutti i prezzi in USD. Pagamenti internazionali tramite PayPal/cripto.',
+    'risk-5-title': 'Eventi Naturali', 'risk-5-desc': 'Stagione degli uragani o eventi climatici costieri che influenzano le operazioni.', 'risk-5-mit': 'Struttura del container resistente agli uragani. Assicurazione inclusa nel budget.',
+    'risk-6-title': 'Scioglimento della Società', 'risk-6-desc': 'Disaccordo tra i 4 fondatori che influenza le operazioni.', 'risk-6-mit': 'Accordo formale tra azionisti. Clausole di uscita definite. Seggio nel consiglio.',
+    'mitigation': 'Mitigazione:',
+    'footer-conf': 'Riservato · Solo per Investitori Qualificati · Aprile 2026',
+    'lbl-lang': 'Lingua:'
+  }
+};
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  const t = translations[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Default language
+setLang('en');
+</script>
+</body>
+</html>
