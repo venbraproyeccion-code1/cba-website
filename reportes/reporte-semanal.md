@@ -1,0 +1,1 @@
+# Reporte Semanal VenBraX Generado automáticamente por n8n
