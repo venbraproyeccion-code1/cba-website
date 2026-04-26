@@ -998,11 +998,12 @@
                     </div>
                 </div>
                 <div class="contact-form reveal">
-                    <input type="text" data-i18n-placeholder="form-name" placeholder="Nombre completo">
-                    <input type="email" data-i18n-placeholder="form-email" placeholder="Correo electrónico">
-                    <input type="text" data-i18n-placeholder="form-subject" placeholder="Asunto">
-                    <textarea data-i18n-placeholder="form-msg" placeholder="Tu mensaje..."></textarea>
-                    <button class="btn-primary" data-i18n="form-send">Enviar mensaje</button>
+                    <input id="form-name" type="text" data-i18n-placeholder="form-name" placeholder="Nombre completo">
+                    <input id="form-email" type="email" data-i18n-placeholder="form-email" placeholder="Correo electrónico">
+                    <input id="form-subject" type="text" data-i18n-placeholder="form-subject" placeholder="Asunto">
+                    <textarea id="form-msg" data-i18n-placeholder="form-msg" placeholder="Tu mensaje..."></textarea>
+                    <button id="form-submit" class="btn-primary" data-i18n="form-send" onclick="sendLead(event)">Enviar mensaje</button>
+                    <div id="form-status" style="margin-top:10px;font-size:14px;"></div>
                 </div>
             </div>
         </div>
@@ -1344,6 +1345,55 @@
             }
         });
     });
+    </script>
+
+    <!-- WEBHOOK VENBRAX -->
+    <script>
+    async function sendLead(e) {
+        e.preventDefault();
+        const btn = document.getElementById('form-submit');
+        const status = document.getElementById('form-status');
+        const name = document.getElementById('form-name').value.trim();
+        const email = document.getElementById('form-email').value.trim();
+        const subject = document.getElementById('form-subject').value.trim();
+        const msg = document.getElementById('form-msg').value.trim();
+
+        if (!name || !email) {
+            status.style.color = '#FF4D6D';
+            status.textContent = '⚠️ Por favor completa nombre y correo.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+        status.style.color = '#00D4FF';
+        status.textContent = '⏳ Enviando tu mensaje...';
+
+        try {
+            const res = await fetch('https://sneer-phrasing-unclasp.ngrok-free.dev/webhook/venbra-lead-capture', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, subject, message: msg, source: 'venbratech.com', timestamp: new Date().toISOString() })
+            });
+
+            if (res.ok) {
+                status.style.color = '#00E5A0';
+                status.textContent = '✅ ¡Mensaje enviado! Te contactaremos pronto.';
+                document.getElementById('form-name').value = '';
+                document.getElementById('form-email').value = '';
+                document.getElementById('form-subject').value = '';
+                document.getElementById('form-msg').value = '';
+            } else {
+                throw new Error('Error en el servidor');
+            }
+        } catch (err) {
+            status.style.color = '#FF4D6D';
+            status.textContent = '❌ Error al enviar. Intenta de nuevo o escríbenos a venbraproyeccion@gmail.com';
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Enviar mensaje';
+    }
     </script>
 </body>
 </html>
